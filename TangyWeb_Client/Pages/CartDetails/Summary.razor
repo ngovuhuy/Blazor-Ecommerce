@@ -1,0 +1,264 @@
+﻿@page "/summary"
+@using Blazored.LocalStorage;
+@using Microsoft.AspNetCore.Authorization;
+@inject IJSRuntime _jsRuntime
+@inject ILocalStorageService _localStorage
+@inject IProductService _productService
+@inject IPaymentService _paymentService
+@inject IOrderSerivce _orderService
+@implements IDisposable
+@inject ICartService _cartService
+@inject ISyncLocalStorageService _local
+@inject NavigationManager _navi
+@attribute [Authorize]
+@if (IsProcessing)
+{
+    <div style="position:fixed;top:50%;left:50%;margin-top:-50px;margin-left:-100px;">
+        <img src="image/ajax-loader.gif" />
+    </div>
+}
+else
+{
+    <section class="h-100 h-custom" style="background-color: #eee;">
+        <div class="container py-5 h-100">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col">
+                    <div class="card">
+                        <div class="card-body p-4">
+
+                            <div class="row">
+
+                                <div class="col-lg-7">
+                                    <h5 class="mb-3">
+                                        <a href="/cart" class="text-body">
+                                            <i class="fas fa-long-arrow-alt-left me-2"></i>Quay lại giỏ hàng
+                                        </a>
+                                    </h5>
+                                    <hr>
+
+                                    <div class="d-flex justify-content-between align-items-center mb-4">
+                                        <div>
+                                            <div class="mb-1 col-10 py-1 "><p class="text-success" style="font-size:x-large;margin:0px;">Đặt hàng</p></div>
+                                            <p class="mb-0">bạn có (@GetCartCount()) sản phẩm trong giỏ hàng</p>
+                                        </div>
+                                      
+                                    </div>
+                                    @foreach (var prod in Order.OrderDetails)
+                                    {
+                                    <div class="card mb-3">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <div class="d-flex flex-row align-items-center">
+                                                    <div>
+                                                            <img src="@prod.Product.ImageUrl"
+                                                             class="img-fluid rounded-3" alt="Shopping item" style="width: 65px;">
+                                                    </div>
+                                                    <div class="ms-3">
+                                                            <h5>@prod.ProductName</h5>
+                                                            <p class="small mb-0">@prod.Size, @prod.Product.Category.Name</p>
+                                                    </div>
+                                                </div>
+                                                    <div class="d-flex flex-row align-items-center" style="width: 200px;">
+                                                    <div style="width: 50px;">
+                                                            <h5 class="fw-normal mb-0">@prod.Count</h5>
+                                                    </div>
+                                                    <div style="width: 110px;">
+                                                            <h5 class="mb-0"> @((prod.Count * prod.Price)) Vnđ</h5>
+                                                    </div>
+                                                   
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    }
+
+                                </div>
+                                <div class="col-lg-5">
+
+                                    <div class="card bg-primary text-white rounded-3">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between align-items-center ">
+                                                <h5 class="mb-0">Thông tin chi tiết</h5>
+                                                <img src="https://cdn-icons-png.flaticon.com/512/6596/6596121.png"
+                                                     class="img-fluid rounded-3" style="width: 45px; color:white;" alt="Avatar">
+                                            </div>
+                                            <EditForm Model="Order.OrderHeader" OnValidSubmit="HandleCheckout" class="mt-4">
+                                                <DataAnnotationsValidator />
+                                                <div class="form-outline form-white mb-2">
+                                                    <InputText type="text" @bind-Value="Order.OrderHeader.Name" class="form-control form-control-lg" siez="17"
+                                                               placeholder="Vui lòng nhập tên" style="font-size: 14px;" />
+                                                    <ValidationMessage For="()=>Order.OrderHeader.Name"></ValidationMessage>
+                                                </div>
+
+                                                <div class="form-outline form-white mb-2">
+                                                    <InputText type="number" @bind-Value="Order.OrderHeader.PhoneNumber" class="form-control form-control-lg" siez="17"
+                                                               placeholder="Vui lòng nhập số điện thoại" style="font-size: 14px;" />
+                                                    <ValidationMessage For="()=>Order.OrderHeader.PhoneNumber"></ValidationMessage>
+                                                </div>
+
+
+                                                <div class="form-outline form-white mb-2">
+                                                    <InputText type="email" @bind-Value="Order.OrderHeader.Email" class="form-control form-control-lg" siez="17"
+                                                               placeholder="Vui lòng nhập email" style="font-size: 14px;" />
+                                                    <ValidationMessage For="()=>Order.OrderHeader.Email"></ValidationMessage>
+                                                </div>
+
+                                                <div class="form-outline form-white mb-2">
+                                                    <InputText type="text" @bind-Value="Order.OrderHeader.StreetAddress" class="form-control form-control-lg" siez="17"
+                                                               placeholder="Vui lòng nhập địa chỉ" style="font-size: 14px;" />
+                                                    <ValidationMessage For="()=>Order.OrderHeader.StreetAddress"></ValidationMessage>
+                                                </div>
+
+                                                <div class="form-outline form-white mb-2">
+                                                    <InputText type="text" @bind-Value="Order.OrderHeader.City" class="form-control form-control-lg" siez="17"
+                                                               placeholder="Vui lòng nhập thành phố" style="font-size: 14px;" />
+                                                    <ValidationMessage For="()=>Order.OrderHeader.City"></ValidationMessage>
+                                                </div>
+
+                                                <div class="form-outline form-white mb-2">
+                                                    <InputText  hidden type="text" @bind-Value="Order.OrderHeader.State" class="form-control form-control-lg" siez="17"
+                                                               placeholder="Enter State" style="font-size: 14px;" />
+                                                    <ValidationMessage For="()=>Order.OrderHeader.State"></ValidationMessage>
+                                                </div>
+
+                                                <div class="form-outline form-white mb-2">
+                                                    <InputText hidden type="text" @bind-Value="Order.OrderHeader.PostalCode" class="form-control form-control-lg" siez="17"
+                                                               placeholder="Enter PostalCode" style="font-size: 14px;" />
+                                                    <ValidationMessage For="()=>Order.OrderHeader.PostalCode"></ValidationMessage>
+                                                </div>
+
+                                                <div class="d-flex justify-content-between mb-2">
+                                                    <p class="mb-2">Tổng phụ</p>
+                                                    <p class="mb-2">@Order.OrderHeader.OderTotal Vnđ</p>
+                                                </div>
+
+                                                <div class="d-flex justify-content-between mb-2">
+                                                    <p class="mb-2">Phí vận chuyển</p>
+                                                    <p class="mb-2">miễn phí</p>
+                                                </div>
+
+                                                <div class="d-flex justify-content-between mb-4">
+                                                    <p class="mb-2">Tổng tiền</p>
+                                                    <p class="mb-2">@Order.OrderHeader.OderTotal Vnđ</p>
+                                                </div>
+
+                                                <button type="submit" class="btn btn-info btn-block btn-lg text-white" style="width:100%;">
+                                                    <div class="d-flex justify-content-between">
+                                                        <span>@Order.OrderHeader.OderTotal Vnđ</span>
+                                                        <span>Tiến hành thanh toán <i class="fas fa-long-arrow-alt-right ms-2"></i></span>
+                                                    </div>
+                                                </button>
+                                            </EditForm>
+
+
+                            
+
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+   
+    }
+@code {
+    public bool IsProcessing { get; set; } = false;
+    private IEnumerable<ProductDTO> Products { get; set; }
+    private OrderDTO Order { get; set; } = null;
+    //private OrderHeaderDTO OrderHeader = new OrderHeaderDTO();
+    public void Dispose()
+    {
+        _cartService.OnChange -= StateHasChanged;
+    }
+    private int GetCartCount()
+    {
+        var cart = _local.GetItem<List<ShoppingCart>>(SD.ShoppingCart);
+        return cart == null ? 0 : cart.Count;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+      
+        //Order.OrderHeader.PostalCode = "1111";
+        //Order.OrderHeader.State = "Viet Nam";
+        _cartService.OnChange += StateHasChanged;
+        IsProcessing = true;
+        List<ShoppingCart> cart = await _localStorage.GetItemAsync<List<ShoppingCart>>(SD.ShoppingCart);
+        Products = await _productService.GetAll();
+        Order = new()
+            {
+                OrderHeader = new()
+                {
+                    State = "Viet Nam",
+                    PostalCode = "1111",
+                    OderTotal = 0,
+                    Status = SD.Status_Pending
+                },
+                OrderDetails = new List<OrderDetailDTO>()
+            };
+        foreach (var item in cart)
+        {
+            ProductDTO product = Products.FirstOrDefault(u => u.Id == item.ProductId);
+            ProductPriceDTO productPrice = product.ProductPrices.FirstOrDefault(u => u.Id == item.ProductPriceId);
+
+            OrderDetailDTO orderDetailDTO = new()
+                {
+                    ProductId = item.ProductId,
+                    Size = productPrice.Size,
+                    Count = item.Count,
+                    Price = productPrice.Price,
+                    ProductName = product.Name,
+                    Product = product
+                };
+            Order.OrderDetails.Add(orderDetailDTO);
+            Order.OrderHeader.OderTotal += (item.Count * productPrice.Price);
+        }
+
+        if(await _localStorage.GetItemAsync<UserDTO>(SD.Local_UserDetails)!=null)
+        {
+            var userInfo = await _localStorage.GetItemAsync<UserDTO>(SD.Local_UserDetails);
+            Order.OrderHeader.UserId = userInfo.Id;
+            Order.OrderHeader.Name = userInfo.Name;
+            Order.OrderHeader.Email = userInfo.Email;
+            Order.OrderHeader.PhoneNumber = userInfo.PhoneNumber;
+        }
+        IsProcessing = false;
+    }
+    private async Task HandleCheckout()
+    {
+        try
+        {
+            IsProcessing = true;
+            var paymentDto = new StripePaymentDTO()
+                {
+                    Order = Order
+                };
+            var result = await _paymentService.Checkout(paymentDto);
+            var StripeSessionAndPI = result.Data.ToString().Split(';');
+
+            Order.OrderHeader.SessionId = StripeSessionAndPI[0];
+            Order.OrderHeader.PaymentIntentId = StripeSessionAndPI[1];
+
+            var orderDTOSaved = await _orderService.Create(paymentDto);
+
+            await _localStorage.SetItemAsync(SD.Local_OrderDetails, orderDTOSaved);
+
+            await _jsRuntime.InvokeVoidAsync("redirectToCheckout", StripeSessionAndPI[0]);
+           
+        }
+        catch(Exception e)
+        {
+                await _jsRuntime.ToastrError(e.Message);
+        }
+    }
+
+
+}

@@ -1,0 +1,208 @@
+﻿@page "/orderdetails/{userId}"
+@using Blazored.LocalStorage
+@using Tangy_DataAccess
+@inject IOrderSerivce _order
+@inject ILocalStorageService _localStorage
+@inject IOrderSerivce _orderService
+@inject NavigationManager _navi
+@if (Order == null || !Order.Any())
+{
+    <div style="position:fixed;top:50%;left:50%;margin-top:-50px;margin-left:-100px;">
+        <img src="image/ajax-loader.gif" />
+    </div>
+}
+else
+{
+    <h5 style="color: red;
+    font-size: 24px;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    padding-top: 48px;">
+        Lịch sử đặt hàng
+    </h5>
+    @foreach (var orderDTO in Order)
+    {
+        <div class="container mt-5 mb-5">
+
+            <div class="row d-flex justify-content-center">
+
+                <div class="col-md-8">
+
+                    <div class="card">
+                        <div class="invoice p-5-css">
+
+                            <div class="payment border-top mt-3 mb-3 border-bottom table-responsive">
+
+                                <table class="table table-borderless">
+
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <div class="py-2">
+
+                                                    <span class="d-block text-muted">Ngày đặt</span>
+                                                    <span>@orderDTO.OrderHeader.OrderDate</span>
+
+                                                </div>
+                                            </td>
+
+                                            <td>
+                                                <div class="py-2">
+
+                                                    <span class="d-block text-muted">mã đơn hàng</span>
+                                                    <span>@orderDTO.OrderHeader.Id</span>
+
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="py-2">
+
+                                                    <span class="d-block text-muted">Giao đến địa chỉ</span>
+                                                    <span>@orderDTO.OrderHeader.StreetAddress, @orderDTO.OrderHeader.City</span>
+
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+
+                                </table>
+                            </div>
+                            <div class="product border-bottom table-responsive">
+
+                              <table class="table table-borderless">
+                                    @foreach (var orderDetailDTO in orderDTO.OrderDetails)
+                                    {
+                                        <tbody>
+                                            <tr>
+                                                <td width="60%">
+                                                    <span class="font-weight-bold">@orderDetailDTO.ProductName</span>
+                                                    <div class="product-qty">
+                                                        <span class="d-block">Số lượng:@orderDetailDTO.Count</span>
+                                                        @*<span>màu:@orderDetailDTO.Product.Color</span>*@
+
+                                                    </div>
+                                                </td>
+                                                <td width="20%">
+                                                    <div class="text-right">
+                                                        <span class="font-weight-bold">@orderDetailDTO.Price Vnđ</span>
+                                                    </div>
+                                                </td>
+
+                                              @*  <td width="20%">
+                                                    <div class="text-right">
+                                                        <span class="font-weight-bold">@orderDetailDTO.Price Vnđ</span>
+                                                    </div>
+                                                </td>*@
+                                            </tr>
+
+
+                                        </tbody>
+                                    }
+                                </table>
+
+
+
+                            </div>
+
+
+
+                            <div class="row d-flex justify-content-end">
+
+                                <div class="col-md-5">
+
+                                    <table class="table table-borderless">
+
+                                        <tbody class="totals">
+
+                                            <tr>
+                                                <td>
+                                                    <div class="text-left">
+
+                                                        <span class="text-muted">Tổng phụ</span>
+
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="text-right">
+                                                        <span>@orderDTO.OrderHeader.OderTotal Vnđ</span>
+                                                    </div>
+                                                </td>
+                                            </tr>
+
+
+                                            <tr>
+                                                <td>
+                                                    <div class="text-left">
+
+                                                        <span class="text-muted">Miễn phí ship</span>
+
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="text-right">
+                                                        <span>0</span>
+                                                    </div>
+                                                </td>
+                                            </tr>
+
+
+                                            <tr class="border-top border-bottom">
+                                                <td>
+                                                    <div class="text-left">
+
+                                                        <span class="font-weight-bold">Tổng</span>
+
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="text-right">
+                                                        <span class="font-weight-bold">@orderDTO.OrderHeader.OderTotal Vnđ</span>
+                                                    </div>
+                                                </td>
+                                            </tr>
+
+                                        </tbody>
+
+                                    </table>
+
+                                </div>
+
+                            </div>
+                         
+                        </div>
+                        <div class="d-flex justify-content-between footer p-3">
+
+                            <span>Need Help? visit our <a href="/"> help center</a></span>
+                         
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+
+
+@code {
+    private List<OrderDTO> Order { get; set; } = new List<OrderDTO>();
+    [Parameter]
+    public string userId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+      
+        try
+        {
+            Order = await _localStorage.GetItemAsync<List<OrderDTO>>(SD.Local_OrderDetails);
+           Order = await _order.GetUserOrder(userId);
+        }
+        catch (Exception ex)
+        {
+            // Handle exceptions, log, or display an error message.
+            Console.WriteLine($"Exception: {ex.Message}");
+        }
+    }
+}

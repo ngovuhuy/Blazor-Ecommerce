@@ -1,0 +1,179 @@
+﻿@using Blazored.LocalStorage;
+@using System.Text.Json;
+@using Tangy_DataAccess;
+@using Newtonsoft.Json;
+@implements IDisposable
+@inject ISyncLocalStorageService _localStorage
+@inject ICartService _cartService
+@inject IOrderSerivce _orderService
+@inject ILocalStorageService localStorage
+@inject NavigationManager _navi
+@inject IJSRuntime JSRuntime
+<style>
+    .fa-cart-shopping:before, .fa-shopping-cart:before {
+        font-size: 18px;
+        content: "\f07a";
+    }
+
+    .li-css-border {
+        display: flex;
+        align-items: center;
+        /*border: 2px solid #89a988;*/
+        border-radius: 6px;
+        text-decoration: none;
+    }
+
+    .user-icon {
+        position: relative;
+        cursor: pointer;
+    }
+
+    .user-menu {
+        display: none;
+        position: absolute;
+        top: 30px;
+        right: 0;
+        left: -42px;
+        width: 117px;
+    }
+
+    .user-icon:hover .user-menu {
+        display: block;
+    }
+
+    .logout-btn {
+        background-color: #4caf50;
+        color: #fff;
+        
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+    }
+
+        .logout-btn:hover {
+            background-color: #45a049;
+        }
+</style>
+<nav class="navbar navbar-expand-lg navbar-dark p-3" id="headerNav" style="background-color: #27542b;">
+    <div class="container-fluid">
+        <a class="navbar-brand d-block d-lg-none" href="#">
+            <img src="./image/logo1.jpg" height="80" />
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class=" collapse navbar-collapse" id="navbarNavDropdown">
+            <ul class="navbar-nav mx-auto " style="align-items: center;">
+                <li class="nav-item li-css">
+                    <a class="nav-link mx-2 active" aria-current="page" href="/">
+                        <i class="fa-solid fa-house"></i>
+                    </a>
+                </li>
+                
+                <li class="nav-item d-none d-lg-block li-css">
+                    <a class="nav-link mx-2" href="#">
+                        <img src="./image/logo1.jpg" height="80" />
+                    </a>
+                </li>
+               
+              <AuthorizeView>
+                  <Authorized>
+                        @*           <li class="nav-item li-css">
+                        <a class="nav-link mx-2" href="#">Hello, @context.User.Identity.Name</a>
+                        </li>*@
+                        <li class="nav-item li-css">
+                            <div class="user-icon">
+                                <i class="fa-solid fa-user" style="color: rgba(255,255,255,.55);"></i>
+                                <div class="user-menu">
+                             
+                            <a class="nav-link mx-2" href="logout">đăng xuất</a>
+                             
+                                </div>
+                            </div>
+                        </li>
+                        <li class="nav-item li-css">
+                            <a type="button" class="nav-link mx-2" @onclick="NavigateToOrderDetails2"> Lịch sử</a>
+                        </li>
+                  </Authorized>
+                  <NotAuthorized>
+                        <li class="nav-item dropdown li-css">
+                            <a class="nav-link mx-2 " href="login">
+                                <i class="fa-solid fa-user"></i>
+                            </a>
+                          @*  <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                <li class="css-auth"><a class="css-auth" href="login">Login</a></li>
+                                <li class="css-auth"><a class="css-auth" href="register">Register</a></li>
+                                <li class="css-auth"><a class="css-auth" href="#">Contact us</a></li>
+                            </ul>*@
+                        </li>
+                  </NotAuthorized>
+              </AuthorizeView>
+                <li class="nav-item li-css ">
+                    <a class="nav-link mx-2 li-css-border" href="cart" style="height:45px;">
+                      @*  <i class="fa-solid fa-cart-shopping" style="font-size:18px;"></i>*@
+                        <i class="bi bi-cart"></i>
+                    
+                        (@GetCartCount())
+                    </a>
+                </li>
+                
+                    
+     
+            </ul>
+        </div>
+    </div>
+</nav>
+@code{
+    private UserDTO userDetail;
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var jsonString = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "UserDetails");
+
+            if (!string.IsNullOrEmpty(jsonString))
+            {
+                using (JsonDocument document = JsonDocument.Parse(jsonString))
+                {
+                    userDetail = new UserDTO
+                        {
+                            Id = document.RootElement.GetProperty("Id").GetString(),
+                            Name = document.RootElement.GetProperty("Name").GetString(),
+                            Email = document.RootElement.GetProperty("Email").GetString(),
+                            PhoneNumber = document.RootElement.GetProperty("PhoneNumber").GetString()
+                        };
+
+                    Console.WriteLine("Id: " + userDetail?.Id);
+                }
+            }
+            else
+            {
+                Console.WriteLine("UserDetails not found in Local Storage.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error getting UserDetail from Local Storage: " + ex.Message);
+        }
+        _cartService.OnChange += StateHasChanged;
+    }
+
+    //private void NavigateToOrderDetails()
+    //{
+    //    _navi.NavigateTo($"/orderdetails/{userDetail.Id}");
+    //}
+    private void NavigateToOrderDetails2()
+    {
+        _navi.NavigateTo($"/orderdetails/{userDetail.Id}");
+    }
+    public void Dispose()
+    {
+        _cartService.OnChange -= StateHasChanged;
+    }
+    private int GetCartCount()
+    {
+        var cart = _localStorage.GetItem<List<ShoppingCart>>(SD.ShoppingCart);
+        return cart == null ? 0 : cart.Count;
+    }
+}

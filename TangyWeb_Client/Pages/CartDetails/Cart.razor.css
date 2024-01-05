@@ -1,0 +1,10 @@
+﻿@media(max-width: 769px) {
+    .mobifix {
+        padding-bottom: 24px;
+    }
+}
+@media (min-width:769px) and (max-width:992px) {
+    .mobifixtru {
+        margin-top: 6px;
+    }
+}

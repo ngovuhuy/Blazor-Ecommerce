@@ -1,0 +1,182 @@
+﻿@page "/cart"
+@using Blazored.LocalStorage;
+@inject ILocalStorageService _localStorage
+@inject IProductService _productService
+@inject ICartService _cartService
+@inject NavigationManager _navi
+<style>
+	a{
+		text-decoration:none;
+	}
+
+	.empty-cart {
+		text-align: center;
+		height:500px;
+		background-color: #fff;
+		border-radius: 8px;
+		box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+		padding: 20px;
+	}
+</style>
+
+@if (IsProcessing)
+{
+	<div style="position:fixed;top:50%;left:50%;margin-top:-50px;margin-left:-100px;">
+		<img src="image/ajax-loader.gif" />
+	</div>
+}
+else
+{
+	@if (!ShoppingCart.Any())
+	{
+		<div class="alert alert-info empty-cart" role="alert">
+			<h4 class="alert-heading">Giỏ hàng của bạn đang trống!</h4>
+			<p class="mb-0">Hãy thêm sản phẩm để trải nghiệm mua sắm tuyệt vời của chúng tôi.</p>
+		</div>
+	}
+	else
+	{
+		<div class="container mt-4" style="padding-bottom:100px;">
+			<div class="card">
+				<div class="card-header text-light ml-0 " style="background-color: rgba(0, 0, 0, 0.05);">
+					<div class="row">
+						<div class="col-6  pt-2  text-dark" style="font-size: 20px;font-style: oblique;">
+							Giỏ hàng
+						</div>
+						<div class="col-6 col-md-3 offset-md-3 text-end">
+							<a href="/" class="btn btn-secondary ">Tiếp tục mua sắm</a>
+						</div>
+					</div>
+				</div>
+				<div class="card-body">
+
+					@foreach (var item in ShoppingCart)
+					{
+
+						<div class="row mobifix">
+							<div class="col-3 col-md-1 text-center py-2">
+								<img src="@item.Product.ImageUrl" class="rounded" width="100%" />
+							</div>
+							<div class="col-9 text-sm-center text-md-start col-md-4 pt-lg-1 " style="display: flex;
+    justify-content: center;
+    align-items: center;">
+								<h4 style="padding-bottom:0;"><strong>@item.Product.Name</strong></h4>
+
+								<div class="badge bg-primary text-center" style="font-size:16px;">
+									@item.Product.Category.Name
+								</div>
+								
+							</div>
+							<div class="col-12 text-sm-center col-md-7 text-md-start row  pt-lg-3 mt-3">
+								<div class="col-4 pt-1 ">
+
+									<h6><strong>@item.ProductPrice.Price Vnđ <span class="text-muted">x</span> @item.Count </strong></h6>
+								</div>
+								<div class="col-6 col-sm-4 col-lg-6">
+									<button @onclick="()=>Increment(item.ProductId,item.ProductPriceId,1)" type="submit" class="btn btn-primary">
+										<i class="bi bi-plus-square"></i>
+									</button>
+									<button @onclick="()=>Decrement(item.ProductId,item.ProductPriceId,1)" type="submit" class="btn btn-warning mobifixtru">
+										<i class="bi bi-dash-square"></i>
+									</button>
+								</div>
+								<div class="col-2 col-sm-4 col-lg-2 text-right">
+									<button @onclick="()=>Decrement(item.ProductId,item.ProductPriceId,0)" type="submit" class="btn btn-outline-danger">
+										<i class="bi bi-trash-fill"></i>
+									</button>
+								</div>
+							</div>
+						</div>
+					}
+					<hr />
+
+					<div class="row">
+						<div class="col-12 col-md-5">
+						</div>
+						<div class="col-12 col-md-6 offset-md-1 col-lg-4 offset-lg-3 pr-4">
+							<ul class="list-group">
+								<li class="list-group-item d-flex justify-content-between bg-light">
+									<span class="text-info"> Tổng tiền (Vnđ)</span>
+									<strong class="text-info">@OrderTotal Vnđ</strong>
+								</li>
+							</ul>
+						</div>
+					</div>
+
+
+				</div>
+				<div class="card-footer">
+					<div class="col-12  col-md-3 offset-md-9">
+					@*	<button  class="btn btn-primary form-control" @onclick="NavigateToSummary">Summary</button>*@
+						<a class="btn btn-primary form-control" href="/summary">Thanh toán</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	}
+	<Footer></Footer>
+
+
+}
+@code {
+	public bool IsProcessing { get; set; } = false;
+	private List<ShoppingCart> ShoppingCart = new List<ShoppingCart>();
+	private IEnumerable<ProductDTO> Products { get; set; }
+	private double OrderTotal { get; set; } = 0;
+	protected override async Task OnInitializedAsync()
+	{
+		IsProcessing = true;
+		Products = await _productService.GetAll();
+		await LoadCart();
+		IsProcessing = false;
+	}
+	private async Task LoadCart()
+	{
+		OrderTotal = 0;
+		ShoppingCart = await _localStorage.GetItemAsync<List<ShoppingCart>>(SD.ShoppingCart);
+		if (ShoppingCart == null)
+		{
+			ShoppingCart = new List<ShoppingCart>();
+			// Xử lý khi giỏ hàng không có dữ liệu
+			return;
+		}
+		foreach (var cart in ShoppingCart)
+		{
+			cart.Product = Products.FirstOrDefault(u => u.Id == cart.ProductId);
+			cart.ProductPrice = cart.Product.ProductPrices.FirstOrDefault(u => u.Id == cart.ProductPriceId);
+			OrderTotal += (cart.ProductPrice.Price * cart.Count);
+		}
+	}
+	private async Task Increment(int ProductId, int ProductPriceId, int Count)
+	{
+		IsProcessing = true;
+		await _cartService.InCrementCart(new()
+		{
+			Count = Count,
+			ProductId = ProductId,
+			ProductPriceId = ProductPriceId
+		});
+		 await LoadCart();
+		IsProcessing = false;
+	}
+
+
+	private async Task Decrement(int ProductId, int ProductPriceId, int Count)
+	{
+		IsProcessing = true;
+		await _cartService.DeCrementCart(new()
+			{
+				Count = Count,
+				ProductId = ProductId,
+				ProductPriceId = ProductPriceId
+			});
+		await LoadCart();
+
+		IsProcessing = false;
+	}
+
+	//private void NavigateToSummary()
+	//{
+	//	_navi.NavigateTo("/summary", forceLoad:true);
+	//}
+}

@@ -1,0 +1,239 @@
+﻿@page "/OrderConfirmation"
+@using Blazored.LocalStorage;
+@inject ILocalStorageService _localStorage
+@inject IOrderSerivce _orderService
+@inject NavigationManager _navi
+@if (IsProcessing)
+{
+    <div style="position:fixed;top:50%;left:50%;margin-top:-50px;margin-left:-100px;">
+        <img src="image/ajax-loader.gif" />
+    </div>
+}
+else
+{
+    @if (Order.OrderHeader.Status == SD.Status_Confirmed)
+    {
+        <div class="container mt-5 mb-5">
+
+            <div class="row d-flex justify-content-center">
+
+                <div class="col-md-8">
+
+                    <div class="card">
+
+
+                        <div class="text-left logo p-2 px-5" style="height: 75px ">
+
+                            <img src="/image/logo.png" width="50" style="margin-top: 9px;">
+
+
+                        </div>
+
+                        <div class="invoice p-5-css">
+
+                            <h5>Đơn hàng của bạn đã được xác nhận!</h5>
+
+                            <span class="font-weight-bold d-block mt-4">Xin chào, @Order.OrderHeader.Name</span>
+                            <span>
+                                Đơn đặt hàng của bạn đã được xác nhận và sẽ được chuyển đi trong hai ngày tới!
+                            </span>
+
+                            <div class="payment border-top mt-3 mb-3 border-bottom table-responsive">
+
+                                <table class="table table-borderless">
+
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <div class="py-2">
+
+                                                    <span class="d-block text-muted">Ngày đặt</span>
+                                                    <span>@Order.OrderHeader.OrderDate</span>
+
+                                                </div>
+                                            </td>
+
+                                            <td>
+                                                <div class="py-2">
+
+                                                    <span class="d-block text-muted">mã đơn hàng</span>
+                                                    <span>@Order.OrderHeader.Id</span>
+
+                                                </div>
+                                            </td>
+
+                                            <td>
+                                                <div class="py-2">
+
+                                                    <span class="d-block text-muted">Payment</span>
+                                                    <span><img src="https://img.icons8.com/color/48/000000/mastercard.png" width="20" /></span>
+
+                                                </div>
+                                            </td>
+
+                                            <td>
+                                                <div class="py-2">
+
+                                                    <span class="d-block text-muted">Giao đến địa chỉ</span>
+                                                    <span>@Order.OrderHeader.StreetAddress, @Order.OrderHeader.City</span>
+
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+
+                                </table>
+                            </div>
+                            <div class="product border-bottom table-responsive">
+
+                                <table class="table table-borderless">
+                                    @foreach (var item in Order.OrderDetails)
+                                    {
+                                    <tbody>
+                                        <tr>
+                                            <td width="20%">
+
+                                                <img src="@item.Product.ImageUrl" width="90">
+
+                                            </td>
+
+                                            <td width="60%">
+                                                <span class="font-weight-bold">@item.ProductName</span>
+                                                <div class="product-qty">
+                                                    <span class="d-block">Số lượng:@item.Count</span>
+                                                    <span>màu:@item.Product.Color</span>
+
+                                                </div>
+                                            </td>
+                                            <td width="20%">
+                                                <div class="text-right">
+                                                    <span class="font-weight-bold">@item.Price Vnđ</span>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+
+                                    </tbody>
+                                    }
+                                </table>
+
+
+
+                            </div>
+
+
+
+                            <div class="row d-flex justify-content-end">
+
+                                <div class="col-md-5">
+
+                                    <table class="table table-borderless">
+
+                                        <tbody class="totals">
+
+                                            <tr>
+                                                <td>
+                                                    <div class="text-left">
+
+                                                        <span class="text-muted">Tổng phụ</span>
+
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="text-right">
+                                                        <span>@Order.OrderHeader.OderTotal Vnđ</span>
+                                                    </div>
+                                                </td>
+                                            </tr>
+
+
+                                            <tr>
+                                                <td>
+                                                    <div class="text-left">
+
+                                                        <span class="text-muted">Miễn phí ship</span>
+
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="text-right">
+                                                        <span>0</span>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                           
+
+                                            <tr class="border-top border-bottom">
+                                                <td>
+                                                    <div class="text-left">
+
+                                                        <span class="font-weight-bold">Tổng</span>
+
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="text-right">
+                                                        <span class="font-weight-bold">@Order.OrderHeader.OderTotal Vnđ</span>
+                                                    </div>
+                                                </td>
+                                            </tr>
+
+                                        </tbody>
+
+                                    </table>
+
+                                </div>
+
+                            </div>
+                            <p>Chúng tôi sẽ gửi email xác nhận vận chuyển khi mặt hàng được vận chuyển thành công!</p>
+                            <p class="font-weight-bold mb-0">Cảm ơn đã mua sắm với chúng tôi!</p>
+                            <span>Lành Store</span>
+                        </div>
+                        <div class="d-flex justify-content-between footer p-3">
+
+                            <span>Need Help? visit our <a href="/"> help center</a></span>
+                            <span>@Order.OrderHeader.OrderDate</span>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row mt-4 pt-4">
+            <div class="col-10 offset-1 text-center">
+                <h2 class="text-danger">Order Issue!</h2>
+                <p>Your order had payment issue please cotact us with Order ID:  @Order.OrderHeader.Id</p>
+            </div>
+        </div>
+    }
+}
+@code {
+    public bool IsProcessing { get; set; } = false;
+    private OrderDTO Order { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        IsProcessing = true;
+		Order = await _localStorage.GetItemAsync<OrderDTO>(SD.Local_OrderDetails);
+        if (Order == null)
+        {
+            Order = new OrderDTO();
+            return;
+        }
+		//add logic to check payment and update status 
+		var updatesOrder = await _orderService.MarkPaymentSuccessful(Order.OrderHeader);
+		if(updatesOrder.Status == SD.Status_Confirmed)
+		{
+            Order.OrderHeader.Status = updatesOrder.Status;
+			await _localStorage.RemoveItemAsync(SD.ShoppingCart);
+			await _localStorage.RemoveItemAsync(SD.Local_OrderDetails);
+            StateHasChanged();
+		}
+		IsProcessing = false;
+
+	}
+   
+}

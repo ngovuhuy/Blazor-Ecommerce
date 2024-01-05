@@ -1,0 +1,16 @@
+﻿@page "/learnBlazor/learnRouter"
+@page "/learnBlazor/learnRouter/{parameter1}"
+@page "/learnBlazor/learnRouter/{parameter1}/{parameter2}"
+
+<h3>Router</h3>
+
+<h4>Parameter 1: @parameter1</h4>
+<h4>Parameter 2: @parameter2</h4>
+
+@code {
+    [Parameter]
+    public string parameter1 { get; set; }
+
+    [Parameter]
+    public string parameter2 { get; set; }
+}

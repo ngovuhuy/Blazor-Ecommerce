@@ -1,0 +1,141 @@
+﻿@page "/details/{ProductId:int}"
+@using TangyWeb_Client.ViewModels;
+@inject IProductService _productService
+@inject ICartService _cartService
+@inject NavigationManager _navigationManager
+@inject IJSRuntime _jsRuntime
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" rel="stylesheet">
+<style>
+    a{
+        text-decoration:none;
+    }
+</style>
+
+@if (IsProcessing)
+{
+    <div style="position:fixed;top:50%;left:50%;margin-top:-50px;margin-left:-100px;">
+        <img src="image/ajax-loader.gif" />
+    </div>
+}
+else
+{
+	<EditForm OnValidSubmit="AddToCart"  Model="DetailsVM" method="post">
+		<DataAnnotationsValidator />
+	<div class="container">
+		<div class="card">
+			<div class="container-fliud">
+				<div class="wrapper row">
+					<div class="preview col-md-6">
+						<div class="preview-pic tab-content">
+							<div class="tab-pane active" id="pic-1" style="width: 83%;border-radius: 50%"><img src="@Product.ImageUrl" /></div>
+						</div>
+					</div>
+					<div class="details col-md-6">
+						<h3 class="product-title">@Product.Name</h3>
+						<div class="rating">
+							<div class="stars">
+								<span class="fa fa-star checked"></span>
+								<span class="fa fa-star checked"></span>
+								<span class="fa fa-star checked"></span>
+								<span class="fa fa-star"></span>
+								<span class="fa fa-star"></span>
+							</div>
+							<span class="review-no">41 đánh giá</span>
+						</div>
+						<p class="product-description">@Product.Description</p>
+							<div class="row">
+						@foreach (var productPrice in Product.ProductPrices)
+						{
+							if(productPrice.Id == DetailsVM.SelectedProductPriceId)
+							{
+
+										<div class="col-2 bg-light text-center pt-2 m-2 reponsive-fix" style="border:3px solid #28A745; border-radius:10px;box-shadow:5px;width: 120px;">
+											<p hidden>@productPrice.Size</p>
+											<p class="margin-bottom: 6px;">@productPrice.Price Vnđ</p>
+
+										</div>
+							}
+							else
+							{
+
+										<div class="col-2 bg-light text-center pt-2 m-2 reponsive-fix" style="border:1px solid; border-radius:10px;box-shadow:5px"
+									@onclick="(args)=>SelectedProductPrice(args,productPrice.Id)">
+										<p hidden>@productPrice.Size</p>
+									   <p>@productPrice.Price.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))</p>
+									</div>
+							}
+						}
+							</div>
+							<p>
+								Màu: <span style="color: #817979;font-weight: 200;">@Product.Color</span>
+							</p>
+							@if (!Product.ProductPrices.Any())
+							{
+								<p class="text-warning">No Size avaible yet...</p>
+							}
+							else
+							{
+								<p>
+									Số lượng: <InputNumber @bind-Value="DetailsVM.Count" type="number" style="outline: none;border: none; border-radius: 7px;padding: 0px 0px;width: 50px;text-align: center;" />
+									<ValidationMessage For="()=> DetailsVM.Count"></ValidationMessage>
+								</p>
+							}
+						<div class="action" style="padding-top: 18px;">
+								@if (DetailsVM.SelectedProductPriceId > 0)
+								{
+									<button class=" btn btn-success" type="submit">Thêm Vào Giỏ Hàng</button>
+								}
+								else
+								{
+									<button disabled class="btn btn-success" type="button">Thêm Vào Giỏ Hàng</button>
+								}
+								<a class="btn btn-danger" href="/" style="margin-left: 12px;">Trở Lại</a>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	</EditForm>
+    <Footer></Footer>
+}
+@code {
+	[Parameter]
+	public int ProductId { get; set; }
+
+	public ProductDTO Product { get; set; } = new();
+
+	public bool IsProcessing { get; set; } = false;
+
+	public DetailsVM DetailsVM { get; set; } = new();
+	protected override async Task OnInitializedAsync()
+	{
+		IsProcessing = true;
+		Product = await _productService.Get(ProductId);
+		if (Product.ProductPrices.Any())
+		{
+			DetailsVM.ProductPrice = Product.ProductPrices.First();
+			DetailsVM.SelectedProductPriceId = DetailsVM.ProductPrice.Id;
+		}
+
+		IsProcessing = false;
+	}
+	public async Task SelectedProductPrice(MouseEventArgs e, int productPriceId)
+	{
+		DetailsVM.ProductPrice = Product.ProductPrices.FirstOrDefault(u => u.Id == productPriceId);
+		DetailsVM.SelectedProductPriceId = productPriceId;
+	}
+	private async Task AddToCart()
+	{
+		ShoppingCart shoppingCart = new()
+			{
+				Count = DetailsVM.Count,
+				ProductId = ProductId,
+				ProductPriceId = DetailsVM.SelectedProductPriceId
+			};
+		await _cartService.InCrementCart(shoppingCart);
+		_navigationManager.NavigateTo("/");
+		await _jsRuntime.ToastrSuccess("Product added to cart successfully");
+	}
+}

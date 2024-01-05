@@ -1,0 +1,38 @@
+﻿
+
+body {
+    background-color: #ffe8d2;
+    font-family: 'Montserrat', sans-serif
+}
+
+.card {
+    border: none
+}
+
+.logo {
+    background-color: #eeeeeea8
+}
+
+.totals tr td {
+    font-size: 13px
+}
+
+.footer {
+    background-color: #eeeeeea8
+}
+
+    .footer span {
+        font-size: 12px
+    }
+
+.product-qty span {
+    font-size: 12px;
+    color: #dedbdb
+}
+.logo {
+    background-color: #eeeeeea8;
+}
+
+.p-5-css {
+    padding: 1rem;
+}

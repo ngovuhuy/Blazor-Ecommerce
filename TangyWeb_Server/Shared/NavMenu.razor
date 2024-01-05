@@ -1,33 +1,69 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿    <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">TangyWeb_Server</a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
+        </div>
     </div>
-</div>
 
-<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
-    <nav class="flex-column">
+    <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+        <nav class="flex-column">
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="fetchdata">
+                    <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="/learnBlazor/bindprop">
+                    <span class="oi oi-list-rich" aria-hidden="true"></span> Component
+                </NavLink>
+            </div>
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
+            <NavLink class="nav-link" href="/learnBlazor/demoproduct">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> Razor Component
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/learnBlazor/parentComponent">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> Parent/Child Relation
             </NavLink>
         </div>
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="oi oi-plus" aria-hidden="true"></span> Counter
+            <NavLink class="nav-link" href="/learnBlazor/learnRouter">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> Learning Router
             </NavLink>
         </div>
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="fetchdata">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
+            <NavLink class="nav-link" href="/learnBlazor/blazorJs">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> Blazor Js
             </NavLink>
         </div>
-    </nav>
+        <AuthorizeView Roles="@roleAdmin">
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/category">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> Category
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/product">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> Product
+            </NavLink>
+        </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="/orderList">
+                    <span class="oi oi-list-rich" aria-hidden="true"></span> Orders
+                </NavLink>
+            </div>
+        </AuthorizeView>
+   
+        </nav>
 </div>
 
 @code {
+    private string roleAdmin = Tangy_Common.SD.Role_Admin;
     private bool collapseNavMenu = true;
 
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;

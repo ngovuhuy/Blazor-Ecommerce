@@ -1,0 +1,54 @@
+.navbar .li-css {
+    margin-left: 32px;
+    margin-right: 32px;
+}
+
+.dropdown-menu li a:hover {
+    background: #ccc;
+}
+
+.dropdown-menu li {
+    display: block;
+}
+
+    .dropdown-menu li a {
+        text-decoration: none;
+        color: #000;
+        display: block;
+        text-align: center;
+    }
+
+.dropdown-menu a {
+    position: relative;
+    transition: color 0.3s ease;
+}
+
+
+    .dropdown-menu a::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: -2px;
+        width: 100%;
+        height: 2px;
+        background-color: orange;
+        transform: scaleX(0);
+        transform-origin: bottom right;
+        transition: transform 0.3s ease;
+    }
+    /* Expand the underline effect on hover */
+    .dropdown-menu a:hover::after {
+        transform: scaleX(1);
+        transform-origin: bottom left;
+    }
+.css-auth {
+    margin-bottom: 12px;
+    margin-top: 12px;
+    height: 50px;
+}
+
+@media screen and (min-width:992px) {
+    .nav-item {
+        line-height: 80px;
+    }
+}
