@@ -26,6 +26,8 @@ namespace Tangy_Business.Mapper
             CreateMap<OrderDetail, OrderDetailDTO>().ReverseMap();
 
             CreateMap<OrderDTO, Order>().ReverseMap();
+            CreateMap<CommentDTO, Comment>().ReverseMap();
+
 
         }
 

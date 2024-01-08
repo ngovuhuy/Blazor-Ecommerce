@@ -10,5 +10,8 @@ namespace Tangy_DataAccess
     public class ApplicationUser : IdentityUser
     {
         public string name { get; set; }
+
+
+         
     }
 }

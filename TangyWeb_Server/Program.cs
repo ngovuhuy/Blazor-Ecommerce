@@ -11,7 +11,7 @@ using TangyWeb_Server.Service.IService;
 using Microsoft.AspNetCore.Identity;
 using Stripe;
 
-Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Ngo9BigBOggjHTQxAR8/V1NHaF1cWWhIYVJpR2Nbe05zflVHallSVAciSV9jS31SdEVhWXxecXFWT2hbUw==");
+Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Ngo9BigBOggjHTQxAR8/V1NAaF5cWWJCfExwWmFZfVpgdVdMYlxbQXdPIiBoS35RckViWXhfcnZVQ2JYUkZ3");
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -30,6 +30,8 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 builder.Services.AddScoped<IProductPriceRepository, ProductPriceRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<ICommentRepository, CommentRepository>();
+
 builder.Services.AddScoped<IFileUpload, FileUpload>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 var app = builder.Build();

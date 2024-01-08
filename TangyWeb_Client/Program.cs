@@ -16,6 +16,7 @@ builder.Services.AddScoped<IProductService,ProductService>();
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IOrderSerivce, OrderService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddScoped<ICommentService, CommentService>();
 
 
 builder.Services.AddBlazoredLocalStorage();
