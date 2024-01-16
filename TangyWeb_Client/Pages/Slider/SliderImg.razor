@@ -1,0 +1,41 @@
+﻿<!-- SliderImages.razor -->
+@inherits ComponentBase
+
+<div>
+    <img style="display: flex;margin: 0 23%;width: 50%;height: 362px;" src="@GetCurrentImageUrl()" alt="Slider Image"  />
+</div>
+
+@code {
+    private int SliderValue { get; set; } = 1;
+
+    private List<string> ImageUrls = new List<string>
+    {
+        "https://bizweb.dktcdn.net/100/426/039/collections/bot-rau-cu.jpg?v=1655709689847=g",
+        "https://maysay.vn/wp-content/uploads/2021/08/51UIp9ObLuL.jpg",
+        "https://cokhidongnam.vn/wp-content/uploads/2021/06/bot-rau-cu-say-lanh-tot-cho-suc-khoe.jpg"
+    };
+
+    private int IntervalInSeconds = 3; // Thời gian giữa các ảnh (3 giây)
+
+    protected override void OnInitialized()
+    {
+        StartAutoSlider();
+    }
+
+    private async Task StartAutoSlider()
+    {
+        while (true)
+        {
+            await Task.Delay(TimeSpan.FromSeconds(IntervalInSeconds));
+            SliderValue = (SliderValue % ImageUrls.Count) + 1;
+            StateHasChanged();
+        }
+    }
+
+    private string GetCurrentImageUrl()
+    {
+        return ImageUrls[SliderValue - 1];
+    }
+
+
+}

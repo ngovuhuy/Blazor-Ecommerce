@@ -1,7 +1,9 @@
 ﻿using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
 using Newtonsoft.Json;
+using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Text;
 using Tangy_Common;
 using Tangy_Models;
@@ -23,6 +25,55 @@ namespace TangyWeb_Client.Service
             _localStorage = localStorage;
             _authStateProvider = authStateProvide;
         }
+
+   
+
+        public async Task<ChangePasswordResponseDTO> ChangePasswordAsync(ChangePasswordDTO changePasswordRequest, string? userId)
+        {
+            try
+            {
+                var apiPath = $"api/account/changepassword?userId={userId}";
+
+                var content = JsonConvert.SerializeObject(changePasswordRequest);
+                var bodyContent = new StringContent(content, Encoding.UTF8, "application/json");
+
+                var uri = new Uri(apiPath, UriKind.RelativeOrAbsolute);
+                var response = await _httpClient.PostAsync(uri, bodyContent);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var contentTemp = await response.Content.ReadAsStringAsync();
+                    var result = JsonConvert.DeserializeObject<ChangePasswordResponseDTO>(contentTemp);
+
+                    return new ChangePasswordResponseDTO()
+                    {
+                        IsPasswordChangedSuccessfully = true
+                    };
+                }
+                else
+                {
+                    var contentTemp = await response.Content.ReadAsStringAsync();
+                    var result = JsonConvert.DeserializeObject<ChangePasswordResponseDTO>(contentTemp);
+
+                    return new ChangePasswordResponseDTO()
+                    {
+                        IsPasswordChangedSuccessfully = false,
+                        Errors = result.Errors
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                // Xử lý lỗi nếu có
+                Console.WriteLine($"An error occurred: {ex.Message}");
+                return new ChangePasswordResponseDTO()
+                {
+                    IsPasswordChangedSuccessfully = false,
+                    Errors = new List<string> { "An error occurred while processing the request." }
+                };
+            }
+        }
+
         public async Task<SignInResponseDTO> Login(SignInRequestDTO signInRequest)
         {
            var content = JsonConvert.SerializeObject(signInRequest);

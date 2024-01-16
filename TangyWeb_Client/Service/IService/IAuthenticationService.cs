@@ -7,5 +7,8 @@ namespace TangyWeb_Client.Service.IService
       Task<SignUpResponseDTO>  RegisterUser(SignUpRequestDTO signUpRequestDTO);
       Task <SignInResponseDTO>  Login(SignInRequestDTO signInRequestDTO);
        Task Logout();
+
+        Task<ChangePasswordResponseDTO> ChangePasswordAsync(ChangePasswordDTO changePasswordRequest, string? userId);
+
     }
 }

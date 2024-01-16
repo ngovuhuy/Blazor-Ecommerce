@@ -84,6 +84,12 @@
             <i class="fa-regular fa-paper-plane icon-send"></i>
         </button>
     </div>
+    @if (userDetail== null)
+    {
+        <p class="text-danger">Vui lòng đăng nhập để thêm Comment.
+
+        </p>
+    }
     @if (Comments == null)
     {
         <p>Loading comments...</p>
@@ -145,12 +151,21 @@
         {
             Console.WriteLine("Error getting UserDetail from Local Storage: " + ex.Message);
         }
-     
+
     }
     private async Task AddComment()
     {
 
         var jsonString = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "UserDetails");
+        if (string.IsNullOrEmpty(jsonString))
+        {
+            _navi.NavigateTo("/login");
+            // Người dùng chưa đăng nhập, xử lý thông báo hoặc chuyển hướng đến trang đăng nhập
+            // Ví dụ: Hiển thị thông báo lỗi
+            Console.WriteLine("User is not logged in. Please log in to add a comment.");
+            return;
+        }
+
         using (JsonDocument document = JsonDocument.Parse(jsonString))
         {
             userDetail = new UserDTO

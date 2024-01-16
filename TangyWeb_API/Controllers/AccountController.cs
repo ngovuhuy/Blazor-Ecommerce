@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -150,6 +151,37 @@ namespace TangyWeb_API.Controllers
                 claims.Add(new Claim(ClaimTypes.Role, role));
             }
             return claims;
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword(string userId, [FromBody] ChangePasswordDTO changePasswordDTO)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+
+            if (user == null)
+            {
+                return NotFound(new { ErrorMessage = "Người dùng không tồn tại" });
+            }
+
+            var result = await _userManager.CheckPasswordAsync(user, changePasswordDTO.CurrentPassword);
+
+            if (!result)
+            {
+                return BadRequest(new { ErrorMessage = "Mật khẩu hiện tại không đúng" });
+            }
+
+            var changePasswordResult = await _userManager.ChangePasswordAsync(user, changePasswordDTO.CurrentPassword, changePasswordDTO.NewPassword);
+
+            if (!changePasswordResult.Succeeded)
+            {
+                // Trả về danh sách lỗi để hiển thị chi tiết lỗi trên giao diện người dùng
+                var errors = changePasswordResult.Errors.Select(error => error.Description).ToList();
+                return BadRequest(new { Errors = errors });
+            }
+
+            return Ok(new { SuccessMessage = "Đổi mật khẩu thành công" });
+
         }
     }
 }

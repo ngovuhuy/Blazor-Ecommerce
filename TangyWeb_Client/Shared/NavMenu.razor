@@ -31,12 +31,20 @@
     .user-menu {
         display: none;
         position: absolute;
-        top: 30px;
+        top: 40px;
         right: 0;
-        left: -42px;
+        left: 0px;
         width: 117px;
     }
 
+    .user-menu2 {
+        display: none;
+        position: absolute;
+        top: 40px;
+        right: 0;
+        left: 0px;
+        width: 117px;
+    }
     .user-icon:hover .user-menu {
         display: block;
     }
@@ -66,11 +74,15 @@
         <div class=" collapse navbar-collapse" id="navbarNavDropdown">
             <ul class="navbar-nav mx-auto " style="align-items: center;">
                 <li class="nav-item li-css">
-                    <a class="nav-link mx-2 active" aria-current="page" href="/">
-                        <i class="fa-solid fa-house"></i>
+                    <a class="nav-link mx-2" aria-current="page" href="/">
+                       @* <i class="fa-solid fa-house"></i>*@
+                       Home
                     </a>
                 </li>
-                
+                <li class="nav-item li-css">
+                    <a type="button" class="nav-link mx-2">Sản Phẩm</a>
+                </li>
+
                 <li class="nav-item d-none d-lg-block li-css">
                     <a class="nav-link mx-2" href="#">
                         <img src="./image/logo1.jpg" height="80" />
@@ -84,11 +96,13 @@
                         </li>*@
                         <li class="nav-item li-css">
                             <div class="user-icon">
-                                <i class="fa-solid fa-user" style="color: rgba(255,255,255,.55);"></i>
+                                @*<i class="fa-solid fa-user" style="color: rgba(255,255,255,.55);"></i>*@
+                                <a class="nav-link mx-2" href="#">Tài Khoản</a>
                                 <div class="user-menu">
-                             
-                            <a class="nav-link mx-2" href="logout">đăng xuất</a>
-                             
+                            <a class="nav-link mx-2" href="logout" style="color:#fff">đăng xuất</a>
+                                </div>
+                                <div>
+                                    <a type="button" class="nav-link mx-2" @onclick="ChangePassword" style="color:#fff">Đổi mật khẩu</a>
                                 </div>
                             </div>
                         </li>
@@ -99,7 +113,8 @@
                   <NotAuthorized>
                         <li class="nav-item dropdown li-css">
                             <a class="nav-link mx-2 " href="login">
-                                <i class="fa-solid fa-user"></i>
+                               @* <i class="fa-solid fa-user"></i>*@
+                               Đăng nhập
                             </a>
                           @*  <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                 <li class="css-auth"><a class="css-auth" href="login">Login</a></li>
@@ -112,8 +127,8 @@
                 <li class="nav-item li-css ">
                     <a class="nav-link mx-2 li-css-border" href="cart" style="height:45px;">
                       @*  <i class="fa-solid fa-cart-shopping" style="font-size:18px;"></i>*@
-                        <i class="bi bi-cart"></i>
-                    
+                       @* <i class="bi bi-cart"></i>*@
+                        Giỏ Hàng
                         (@GetCartCount())
                     </a>
                 </li>
@@ -156,7 +171,8 @@
         {
             Console.WriteLine("Error getting UserDetail from Local Storage: " + ex.Message);
         }
-        _cartService.OnChange += StateHasChanged;
+     
+
     }
 
     //private void NavigateToOrderDetails()
@@ -166,6 +182,10 @@
     private void NavigateToOrderDetails2()
     {
         _navi.NavigateTo($"/orderdetails/{userDetail.Id}");
+    }
+    private void ChangePassword()
+    {
+        _navi.NavigateTo($"/changepassword/{userDetail.Id}");
     }
     public void Dispose()
     {
