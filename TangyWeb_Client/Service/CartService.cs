@@ -1,5 +1,6 @@
 ﻿using Blazored.LocalStorage;
 using Tangy_Common;
+using Tangy_Models;
 using TangyWeb_Client.Service.IService;
 using TangyWeb_Client.ViewModels;
 
@@ -17,19 +18,19 @@ namespace TangyWeb_Client.Service
 		{
 			var cart = await _localStorage.GetItemAsync<List<ShoppingCart>>(SD.ShoppingCart);
 			bool itemInCart = false;
-			if(cart == null)
+			if (cart == null)
 			{
 				cart = new List<ShoppingCart>();
 			}
-			foreach(var obj in cart)
+			foreach (var obj in cart)
 			{
-				if(obj.ProductId== cartToAdd.ProductId && obj.ProductPriceId==cartToAdd.ProductPriceId)
+				if (obj.ProductId == cartToAdd.ProductId && obj.ProductPriceId == cartToAdd.ProductPriceId)
 				{
 					itemInCart = true;
 					obj.Count = obj.Count + cartToAdd.Count;
 				}
 			}
-			if(!itemInCart)
+			if (!itemInCart)
 			{
 				cart.Add(new ShoppingCart()
 				{
@@ -41,6 +42,7 @@ namespace TangyWeb_Client.Service
 			await _localStorage.SetItemAsync(SD.ShoppingCart, cart);
 			OnChange.Invoke();
 		}
+
 
 		public async Task DeCrementCart(ShoppingCart cartToDecrement)
 		{

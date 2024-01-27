@@ -13,191 +13,91 @@ else
 {
     @if (Order.OrderHeader.Status == SD.Status_Confirmed)
     {
-        <div class="container mt-5 mb-5">
-
-            <div class="row d-flex justify-content-center">
-
-                <div class="col-md-8">
-
-                    <div class="card">
-
-
-                        <div class="text-left logo p-2 px-5" style="height: 75px ">
-
-                            <img src="/image/logo.png" width="50" style="margin-top: 9px;">
-
-
+        <div class="body-detail">
+            <div class="intro-product">
+                <img src="/image/Product-gachchan.png" alt="">
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="text-intro">
+                        <a class="nav-a-intro hover-a" href="">Trang Chủ</a>
+                        <img src="/image/product-img-gachdung.png" alt="">
+                        <a class="nav-a-intro" href="">Sản Phẩm</a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="content-product">
+                        <div class="content-intro">
+                            <h5>BỘT RAU CỦ SẤY LẠNH</h5>
+                            <button class="btn btn-success">Xem thêm sản phẩm</button>
                         </div>
-
-                        <div class="invoice p-5-css">
-
-                            <h5>Đơn hàng của bạn đã được xác nhận!</h5>
-
-                            <span class="font-weight-bold d-block mt-4">Xin chào, @Order.OrderHeader.Name</span>
-                            <span>
-                                Đơn đặt hàng của bạn đã được xác nhận và sẽ được chuyển đi trong hai ngày tới!
-                            </span>
-
-                            <div class="payment border-top mt-3 mb-3 border-bottom table-responsive">
-
-                                <table class="table table-borderless">
-
-                                    <tbody>
-                                        <tr>
-                                            <td>
-                                                <div class="py-2">
-
-                                                    <span class="d-block text-muted">Ngày đặt</span>
-                                                    <span>@Order.OrderHeader.OrderDate</span>
-
-                                                </div>
-                                            </td>
-
-                                            <td>
-                                                <div class="py-2">
-
-                                                    <span class="d-block text-muted">mã đơn hàng</span>
-                                                    <span>@Order.OrderHeader.Id</span>
-
-                                                </div>
-                                            </td>
-
-                                            <td>
-                                                <div class="py-2">
-
-                                                    <span class="d-block text-muted">Payment</span>
-                                                    <span><img src="https://img.icons8.com/color/48/000000/mastercard.png" width="20" /></span>
-
-                                                </div>
-                                            </td>
-
-                                            <td>
-                                                <div class="py-2">
-
-                                                    <span class="d-block text-muted">Giao đến địa chỉ</span>
-                                                    <span>@Order.OrderHeader.StreetAddress, @Order.OrderHeader.City</span>
-
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-
-                                </table>
-                            </div>
-                            <div class="product border-bottom table-responsive">
-
-                                <table class="table table-borderless">
-                                    @foreach (var item in Order.OrderDetails)
-                                    {
-                                    <tbody>
-                                        <tr>
-                                            <td width="20%">
-
-                                                <img src="@item.Product.ImageUrl" width="90">
-
-                                            </td>
-
-                                            <td width="60%">
-                                                <span class="font-weight-bold">@item.ProductName</span>
-                                                <div class="product-qty">
-                                                    <span class="d-block">Số lượng:@item.Count</span>
-                                                    <span>màu:@item.Product.Color</span>
-
-                                                </div>
-                                            </td>
-                                            <td width="20%">
-                                                <div class="text-right">
-                                                    <span class="font-weight-bold">@item.Price Vnđ</span>
-                                                </div>
-                                            </td>
-                                        </tr>
-
-
-                                    </tbody>
-                                    }
-                                </table>
-
-
-
-                            </div>
-
-
-
-                            <div class="row d-flex justify-content-end">
-
-                                <div class="col-md-5">
-
-                                    <table class="table table-borderless">
-
-                                        <tbody class="totals">
-
-                                            <tr>
-                                                <td>
-                                                    <div class="text-left">
-
-                                                        <span class="text-muted">Tổng phụ</span>
-
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div class="text-right">
-                                                        <span>@Order.OrderHeader.OderTotal Vnđ</span>
-                                                    </div>
-                                                </td>
-                                            </tr>
-
-
-                                            <tr>
-                                                <td>
-                                                    <div class="text-left">
-
-                                                        <span class="text-muted">Miễn phí ship</span>
-
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div class="text-right">
-                                                        <span>0</span>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                           
-
-                                            <tr class="border-top border-bottom">
-                                                <td>
-                                                    <div class="text-left">
-
-                                                        <span class="font-weight-bold">Tổng</span>
-
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div class="text-right">
-                                                        <span class="font-weight-bold">@Order.OrderHeader.OderTotal Vnđ</span>
-                                                    </div>
-                                                </td>
-                                            </tr>
-
-                                        </tbody>
-
-                                    </table>
-
-                                </div>
-
-                            </div>
-                            <p>Chúng tôi sẽ gửi email xác nhận vận chuyển khi mặt hàng được vận chuyển thành công!</p>
-                            <p class="font-weight-bold mb-0">Cảm ơn đã mua sắm với chúng tôi!</p>
-                            <span>Lành Store</span>
+                        <div class="status-product">
+                            <h5>Tình Trạng Giao Hàng:</h5>
+                            <p>@Order.OrderHeader.Status</p>
                         </div>
-                        <div class="d-flex justify-content-between footer p-3">
+                    </div>
 
-                            <span>Need Help? visit our <a href="/"> help center</a></span>
-                            <span>@Order.OrderHeader.OrderDate</span>
+                </div>
+                <img class="w-100" src="/image/gachnganglichsu.png" alt="">
+                @foreach (var item in Order.OrderDetails)
+                {
+                <div class="row">
+                    <div class="product-history">
+                        <img class="w-18" src="@item.Product.ImageUrl" alt="">
+                        <div class="text-history">
+                                <p class="name">@item.ProductName</p>
+                            <p class="category">
+                                    Phân loại: @item.Product.Category.Name
+                            </p>
+                                <p class="quantity">x @item.Count  </p>
+                                <p class="price">@item.Price VNĐ</p>
+                        </div>
+                    </div>
+                </div>
+
+                }
+                <div class="container mt-5">
+                    <table class="table custom-table">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th scope="col">Ngày đặt hàng</th>
+                                <th scope="col">Mã đơn hàng</th>
+                                <th class="diachi" scope="col">Địa chỉ giao hàng</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Dữ liệu của bạn sẽ được thêm vào đây -->
+                            <tr>
+                                <td>@Order.OrderHeader.OrderDate</td>
+                                <td>@Order.OrderHeader.Id</td>
+                                <td>@Order.OrderHeader.StreetAddress, @Order.OrderHeader.City</td>
+                            </tr>
+
+                            <!-- Thêm các dòng khác nếu cần -->
+                        </tbody>
+                    </table>
+                    <div class="totalprice">
+                        <p class="tong">Tổng: @Order.OrderHeader.OderTotal VNĐ</p>
+                        <p class="ship">Phí ship: 0 VNĐ</p>
+                    </div>
+                    <img class="w-100" src="/image/gachnganglichsu.png" alt="">
+                    <div class="thanhtien">
+                        <p class="thanhtien-price">Thành tiền: <span class="price-span">@Order.OrderHeader.OderTotal VNĐ</span></p>
+                    </div>
+
+                    <div class="voucher">
+                        <p>@Order.OrderHeader.OrderDate</p>
+                        <div class="xemlai">
+                            <a href="#" class="btn-danhgia" style="text-decoration:none;">Đánh giá</a>
+                            <a href="product" class="btn-mualai" style="text-decoration:none;">Mua lại</a>
 
                         </div>
                     </div>
                 </div>
+
             </div>
+
+
         </div>
     }
     else

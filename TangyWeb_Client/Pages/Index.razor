@@ -6,104 +6,10 @@
 @using Blazorise
 @using Blazorise.Bootstrap
 <PageTitle>Gia Dụng Điện Tử</PageTitle>
-<link href="css/app.css" rel="stylesheet" />
+@*<link href="css/app.css" rel="stylesheet" />*@
 <style>
 
 
-    .mt-50 {
-        margin-top: 50px;
-    }
-
-    .mb-50 {
-        margin-bottom: 50px;
-    }
-
-
-
-    .card {
-        position: relative;
-        display: -ms-flexbox;
-        display: flex;
-        -ms-flex-direction: column;
-        flex-direction: column;
-        min-width: 0;
-        word-wrap: break-word;
-        background-color: #fff;
-        background-clip: border-box;
-        border: 1px solid rgba(0,0,0,.125);
-        border-radius: .1875rem;
-    }
-
-    .card-img-actions {
-        position: relative;
-    }
-
-    .card-body {
-        -ms-flex: 1 1 auto;
-        flex: 1 1 auto;
-        padding: 1.25rem;
-        text-align: center;
-    }
-
-    .card-img {
-        width: 350px;
-    }
-
-    .star {
-        color: red;
-    }
-
-    .bg-cart {
-        background-color: orange;
-        color: #fff;
-    }
-
-        .bg-cart:hover {
-            color: #fff;
-        }
-
-    .bg-buy {
-        background-color: green;
-        color: #fff;
-        padding-right: 29px;
-    }
-
-        .bg-buy:hover {
-            color: #fff;
-        }
-
-    a {
-        text-decoration: none !important;
-    }
-
-    .search-container {
-        display: flex;
-        align-items: flex-end;
-        justify-content: flex-end;
-
-    }
-
-    .search-input {
-        padding: 10px;
-        border: 2px solid #ccc;
-        border-radius: 5px 0 0 5px;
-        outline: none;
-        padding-right: 68px;
-    }
-
-    .search-button {
-        padding: 10px;
-        background-color: #4caf50;
-        color: #fff;
-        border: 2px solid #4caf50;
-        border-radius: 0 5px 5px 0;
-        cursor: pointer;
-        outline: none;
-    }
-
-        .search-button:hover {
-            background-color: #45a049;
-        }
 </style>
 
 @if (IsProcessing)
@@ -114,77 +20,88 @@
 }
 else
 {
-@*    <img src="https://i.makeagif.com/media/10-11-2017/-UrPH4.gif"  style="width:100%; height:500px;"/>*@
-  @*  <img src="https://bizweb.dktcdn.net/100/426/039/collections/bot-rau-cu.jpg?v=1655709689847=g" style="display: flex;
-         margin: 0 23%;
-         width: 50%;
-         height: 362px;" />*@
-  <TangyWeb_Client.Pages.Slider.SliderImg></TangyWeb_Client.Pages.Slider.SliderImg>
-    <div class="container">
-    <div class="row  pb-3 pt-3 backgroundWhite">
-           @* <input type="text" @bind="searchQuery" />
-            <button @onclick="PerformSearch">Tìm Kiếm</button>*@
-            <div class="search-container">
-                <input type="text" @bind="searchQuery" class="search-input" placeholder="Nhập từ khóa">
-                <button @onclick="PerformSearch" class="search-button">Tìm kiếm</button>
+    <div class="background-slider">
+        <img class="img-botmau" src="/image/backgroudbotmau.png" alt="">
+        <h1 class="h1-slider">100% Nguyên Liệu Từ Thiên Nhiên</h1>
+        <h1 class="h1-slider1">Bột Rau Củ Sấy Lạnh</h1>
+        <h4 class="h4-slider">
+            Với sự kết hợp độc đáo của nhiều loại rau củ, bột của chúng tôi mang đến một nguồn cung cấp đa dạng dưỡng chất.
+        </h4>
+        <a href="product" class="btn btn-success button-slider">
+            Xem Thêm
+        </a>
+    </div>
+    <div class="section-intro">
+        <div class="container">
+            <div class="row center-2att p-50-0">
+                <div class="col col-md-6 mg-l-22">
+                    <h3 class="section-intro-h3">Tiện Lợi & Dễ Sử Dụng</h3>
+                    <p class="section-intro-p">
+                        Không còn nỗi lo về việc giữ tươi mới cho rau củ trong tủ lạnh.
+                        Bạn chỉ cần một lượng nhỏ bột rau củ tinh khiết để thêm hương vị
+                        và dưỡng chất vào mọi bữa ăn. Đơn giản, tiện lợi giúp bạn tiết kiệm thời gian,
+                        và thực sự hiệu quả.
+                    </p>
+                </div>
+                <div class="col col-md-3 col-xs-6 w-240">
+                    <img class="h-371" src="/image/botmatcha.png" alt="">
+                </div>
+                <div class="col col-md-3 mobi-none">
+                    <img class="h-371 m-t-54" src="/image/botmaucampng.png" alt="">
+                </div>
             </div>
-
-           
-            @foreach (var category in Products.Select(u => u.Category.Name).Distinct())
-            {
-                <h4 class="mt-4 "><strong class="continuous-glow">@category</strong></h4>
-              
-                    <div class="container d-flex justify-content-center  mb-50">
-
-                        <div class="row">
-                        @if (Products != null)
-                        {
-                 @foreach (var product in Products?.Where(u => u.Category.Name == category) ?? Enumerable.Empty<ProductDTO>())
-                {
-                            <div class="col-md-3 mt-2" >
-                                    <div class="card">
-                                    <div class="card-body">
-                                        <div class="card-img-actions">
-                                            <img src="@product.ImageUrl" class="card-img img-fluid" width="96" height="350" alt="">
-                                        </div>
-                                    </div>
-                                    <div class="card-body bg-light text-center">
-                                        <div class="mb-2">
-                                            <h6 class="font-weight-semibold mb-2">
-                                                <a href="#" class="text-default mb-2" data-abc="true" style="color: #150e0e;">@product.Name</a>
-                                            </h6>
-
-                                            <a href="#" class="text-muted" data-abc="true">Thể Loại: @product.Category.Name</a>
-                                        </div>
-
-                                            <h3 class="font-weight-semibold price-product">
-                                                @product.ProductPrices?.OrderBy(u => u.Price).FirstOrDefault()?.Price
-                                                Vnđ
-                                            </h3>
-                                        <a href="/details/@product.Id" class="btn bg-success text-white hover-detail">Xem chi tiết</a>
-                                    </div>
-                                </div>
-
-
-
-
-                            </div>
-                }
-                        }
-                        else
-                        {
-                            <p>Không tìm thấy kết quả.</p>
-                        }
-
-
-                        </div>
-                    </div>
-            }
-
         </div>
     </div>
 
+    <div class="section-type">
+        <img class="img-type" src="/image/cacloaibot.png" alt="">
+        <div class="h3-div">
+            <h3 class="type-h3">Chúng tôi tin rằng bột rau củ tinh khiết sẽ là sự bổ sung hoàn hảo cho chế độ <br> ăn lành mạnh của bạn.</h3>
+        </div>
+    </div>
 
+    <div class="section-end">
+        <div class="end-text">
+            <h2>
+                Tự Nhiên và Không Chứa Chất Bảo Quản
+            </h2>
+            <p>
+                Bột rau củ tinh khiết của chúng tôi được chế biến một cách tự nhiên,
+                giữ lại tất cả các dưỡng chất quan trọng <br> của rau củ mà không có bất kỳ chất phụ
+                gia nào.
+            </p>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col col-md-4  col-sm-12 end-bot">
+                    <img src="/image/Botnghe.png" alt="">
+                    <h3>Bột Nghệ</h3>
+                    <p>
+                        Có khả năng làm sáng da và giảm tình trạng da mụn.
+                        Chất chống ô nhiễm của curcumin có trong bột nghệ có thể giúp bảo vệ da
+                        khỏi tác động có hại từ môi trường.
+                    </p>
+                </div>
+                <div class="col col-md-4  col-sm-12 end-bot">
+                    <img src="/image/Bottraxanh.png" alt="">
+                    <h3>Bột Trà Xanh</h3>
+                    <p>
+                        Bột trà xanh chứa nhiều chất chống oxi hóa, chủ yếu là catechins,
+                        giúp ngăn chặn sự hủy hoại của gốc tự do trong cơ thể và bảo vệ tế bào khỏi tổn thương.
+
+                    </p>
+                </div>
+                <div class="col col-md-4  col-sm-12 end-bot">
+                    <img src="/image/botcarot.png" alt="">
+                    <h3>Bột Cà Rốt</h3>
+                    <p>
+                        Beta-carotene có trong cà rốt được chuyển hóa thành vitamin A trong cơ thể,
+                        giúp duy trì sức khỏe mắt và tăng cường tầm nhìn.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <Footer></Footer>
 

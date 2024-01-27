@@ -1,0 +1,212 @@
+﻿@page "/cashpayment"
+@using Blazored.LocalStorage;
+@using Microsoft.AspNetCore.Authorization;
+@inject IJSRuntime _jsRuntime
+@inject ILocalStorageService _localStorage
+@inject IProductService _productService
+@inject IPaymentService _paymentService
+@inject IOrderSerivce _orderService
+@inject ICartService _cartService
+@inject ISyncLocalStorageService _local
+@inject NavigationManager _navi
+@attribute [Authorize]
+@if (IsProcessing)
+{
+    <div style="position:fixed;top:50%;left:50%;margin-top:-50px;margin-left:-100px;">
+        <img src="image/ajax-loader.gif" />
+    </div>
+}
+else
+{
+    <div class="body-detail">
+        <div class="intro-product">
+            <img src="/image/Product-gachchan.png" alt="">
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="text-intro">
+                    <a class="nav-a-intro hover-a" href="">Trang Chủ</a>
+                    <img src="/image/product-img-gachdung.png" alt="">
+                    <img class="img-cart-sum" src="/image/shopping-bag.png" alt="">
+                </div>
+            </div>
+            <div class="row pd-t-36 pd-bt-48">
+                <div class="col-md-6 ">
+                    <img class="w-100" src="/image/gachngangsummary.png" alt="">
+                    <div class="summary-sanpham">
+                        <h6 class="sp-text">Sản phẩm</h6>
+                        <h6 class="sp-text">Số lượng</h6>
+                        <h6 class="sp-text">Tạm tính</h6>
+                    </div>
+                    @foreach (var prod in Order.OrderDetails)
+                    {
+                        <div class="summary-product-buy row">
+                            <div class="name-productimg col-md-6 col-sm-6 col-6">
+                                <img class="w-15" src="@prod.Product.ImageUrl" alt="">
+                                <p class="name-productsummary">@prod.Product.Name</p>
+                            </div>
+                            <div class="quantity-summary col-md-3 col-sm-3 col-3">
+                                @prod.Count
+                            </div>
+                            <div class="tamtinh-summary col-md-3 col-sm-3 col-3">
+                                <p class="">@((prod.Count * prod.Price)) VNĐ</p>
+                            </div>
+                        </div>
+                    }
+                    <div class="row">
+                        <div class="tong-summary">
+                            <p class="p-tong">Tổng: </p>
+                            <p class="p-price">@Order.OrderHeader.OderTotal VNĐ</p>
+                        </div>
+                    </div>
+                    <img class="w-100 p-b-26" src="/image/gachngangsummary.png" alt="">
+                    <div class="button-tieptuc">
+                        <button class="btn-tieptuc">TIẾP TỤC XEM SẢN PHẨM</button>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="fill-infor">
+                        <EditForm Model="Order.OrderHeader" OnValidSubmit="HandleCheckout" class="mt-4">
+                            <DataAnnotationsValidator />
+                            <h6>THÔNG TIN CHI TIẾT</h6>
+                            <div class="fill-input">
+                                <InputText class="fill-input-input" type="text" @bind-Value="Order.OrderHeader.Name" placeholder="Vui lòng nhập tên của bạn" style=" width: 100%;
+    margin-bottom: 8px;
+    border-radius: 22px;
+    padding: 8px 18px;
+    color: #888888;" />
+                                <ValidationMessage For="()=>Order.OrderHeader.Name"></ValidationMessage>
+                                <InputText class="fill-input-input" type="text" @bind-Value="Order.OrderHeader.PhoneNumber" placeholder="Vui lòng nhập sđt của bạn" style=" width: 100%;
+    margin-bottom: 8px;
+    border-radius: 22px;
+    padding: 8px 18px;
+    color: #888888;" />
+                                <ValidationMessage For="()=>Order.OrderHeader.PhoneNumber"></ValidationMessage>
+                                <InputText class="fill-input-input" type="text" @bind-Value="Order.OrderHeader.Email" placeholder="Vui lòng nhập email của bạn" style=" width: 100%;
+    margin-bottom: 8px;
+    border-radius: 22px;
+    padding: 8px 18px;
+    color: #888888;" />
+                                <ValidationMessage For="()=>Order.OrderHeader.Email"></ValidationMessage>
+                                <InputText class="fill-input-input" type="text" @bind-Value="Order.OrderHeader.StreetAddress" placeholder="Vui lòng nhập địa chỉ của bạn" style=" width: 100%;
+    margin-bottom: 8px;
+    border-radius: 22px;
+    padding: 8px 18px;
+    color: #888888;" />
+                                <ValidationMessage For="()=>Order.OrderHeader.StreetAddress"></ValidationMessage>
+                                <InputText class="fill-input-input" type="text" @bind-Value="Order.OrderHeader.City" placeholder="Vui lòng nhập thành phố của bạn" style=" width: 100%;
+    margin-bottom: 8px;
+    border-radius: 22px;
+    padding: 8px 18px;
+    color: #888888;" />
+                                <ValidationMessage For="()=>Order.OrderHeader.City"></ValidationMessage>
+                                <InputText hidden type="text" @bind-Value="Order.OrderHeader.State" class="form-control form-control-lg" siez="17"
+                                           placeholder="Enter State" style="font-size: 14px;" />
+                                <ValidationMessage For="()=>Order.OrderHeader.State"></ValidationMessage>
+                                <InputText hidden type="text" @bind-Value="Order.OrderHeader.PostalCode" class="form-control form-control-lg" siez="17"
+                                           placeholder="Enter PostalCode" style="font-size: 14px;" />
+                                <ValidationMessage For="()=>Order.OrderHeader.PostalCode"></ValidationMessage>
+                            </div>
+                            <div class="total-summary">
+                                <p class="">Tổng phụ: @Order.OrderHeader.OderTotal VNĐ</p>
+                                <p>Phí vận chuyển: 0 VNĐ</p>
+                                <p>Tổng thanh toán: <span class="price-total">@Order.OrderHeader.OderTotal VNĐ</span></p>
+                            </div>
+                            <div class="button-thanhtoan">
+                                <button class="btn-thanhtoan">TIẾN HÀNH THANH TOÁN</button>
+                            </div>
+                        </EditForm>
+                    </div>
+
+                </div>
+            </div>
+
+
+
+
+
+        </div>
+
+
+    </div>
+    <Footer></Footer>
+}
+@code {
+    public bool IsProcessing { get; set; } = false;
+    private OrderDTO Order { get; set; } = null;
+    private IEnumerable<ProductDTO> Products { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        IsProcessing = true;
+        List<ShoppingCart> cart = await _localStorage.GetItemAsync<List<ShoppingCart>>(SD.ShoppingCart);
+        Products = await _productService.GetAll();
+        Order = new()
+            {
+                OrderHeader = new()
+                {
+                    State = "Viet Nam",
+                    PostalCode = "1111",
+                    OderTotal = 0,
+                    Status = SD.Status_Pending
+                },
+                OrderDetails = new List<OrderDetailDTO>()
+            };
+
+        foreach (var item in cart)
+        {
+            ProductDTO product = Products.FirstOrDefault(u => u.Id == item.ProductId);
+            ProductPriceDTO productPrice = product.ProductPrices.FirstOrDefault(u => u.Id == item.ProductPriceId);
+
+            OrderDetailDTO orderDetailDTO = new()
+                {
+                    ProductId = item.ProductId,
+                    Size = productPrice.Size,
+                    Count = item.Count,
+                    Price = productPrice.Price,
+                    ProductName = product.Name,
+                    Product = product
+                };
+            Order.OrderDetails.Add(orderDetailDTO);
+            Order.OrderHeader.OderTotal += (item.Count * productPrice.Price);
+        }
+        if (await _localStorage.GetItemAsync<UserDTO>(SD.Local_UserDetails) != null)
+        {
+            var userInfo = await _localStorage.GetItemAsync<UserDTO>(SD.Local_UserDetails);
+            Order.OrderHeader.UserId = userInfo.Id;
+            Order.OrderHeader.Name = userInfo.Name;
+            Order.OrderHeader.Email = userInfo.Email;
+            Order.OrderHeader.PhoneNumber = userInfo.PhoneNumber;
+        }
+        IsProcessing = false;
+
+    }
+
+    private async Task HandleCheckout()
+    {
+        try
+        {
+            var paymentDTO = new StripePaymentDTO()
+                {
+                    Order = Order
+                };
+
+            var orderHeaderSaved = await _orderService.Create(paymentDTO);
+            if (orderHeaderSaved != null || orderHeaderSaved.OrderHeader.Id > 1)
+            {
+                await _localStorage.RemoveItemAsync(SD.ShoppingCart);
+                _navi.NavigateTo("/");
+
+            }
+            else
+            {
+                await _jsRuntime.ToastrError("Payment error!!!");
+            }
+        }
+        catch (Exception ex)
+        {
+            await _jsRuntime.ToastrError(ex.Message);
+        }
+
+    }
+}

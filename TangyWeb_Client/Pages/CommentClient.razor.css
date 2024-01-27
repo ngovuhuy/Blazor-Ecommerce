@@ -1,0 +1,91 @@
+﻿.comment-main {
+    border: 1px solid #285430;
+    margin-bottom: 32px;
+    padding-bottom: 16px;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.comment-quantity {
+    margin-bottom: 24px;
+}
+
+.user-comment {
+    padding-top: 12px;
+}
+
+.infor-user {
+    display: flex;
+}
+
+    .infor-user p {
+        text-align: left;
+        margin-right: 12px;
+        margin-bottom: 6px;
+    }
+
+.pd-32 {
+    padding-top: 38px;
+}
+
+.input-comment {
+    padding-bottom: 24px;
+}
+
+    .input-comment input {
+        padding-top: 14px;
+        width: 90%;
+        padding-bottom: 14px;
+        border: 2px solid #285430;
+        padding-left: 19px;
+        font-size: 20px;
+        margin-left: -12px;
+    }
+
+    .input-comment button {
+        margin-left: -8px;
+        padding: 1px 42px;
+        margin-top: -1px;
+    }
+
+.comment-detail {
+    padding-top: 36px;
+}
+
+@media (max-width: 1024px) {
+    .input-comment {
+        text-align: center;
+    }
+
+        .input-comment input {
+            padding-top: 10px;
+            width: 65%;
+            padding-bottom: 10px;
+        }
+
+        .input-comment button {
+            padding: 14px 42px;
+        }
+}
+@media (max-width: 574px) {
+    .input-comment
+    {
+        justify-content:center;
+    }
+}
+    @media (max-width: 400px) {
+        .input-comment input {
+            padding-top: 4px;
+            width: 50%;
+            padding-bottom: 4px;
+            font-size: 14px;
+            padding-left: 0;
+        }
+
+        .input-comment button {
+            padding: 4px 22px;
+            margin-top: -3px;
+        }
+    }

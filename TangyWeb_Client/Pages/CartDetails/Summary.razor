@@ -19,154 +19,118 @@
 }
 else
 {
-    <section class="h-100 h-custom" style="background-color: #eee;">
-        <div class="container py-5 h-100">
-            <div class="row d-flex justify-content-center align-items-center h-100">
-                <div class="col">
-                    <div class="card">
-                        <div class="card-body p-4">
-
-                            <div class="row">
-
-                                <div class="col-lg-7">
-                                    <h5 class="mb-3">
-                                        <a href="/cart" class="text-body">
-                                            <i class="fas fa-long-arrow-alt-left me-2"></i>Quay lại giỏ hàng
-                                        </a>
-                                    </h5>
-                                    <hr>
-
-                                    <div class="d-flex justify-content-between align-items-center mb-4">
-                                        <div>
-                                            <div class="mb-1 col-10 py-1 "><p class="text-success" style="font-size:x-large;margin:0px;">Đặt hàng</p></div>
-                                            <p class="mb-0">bạn có (@GetCartCount()) sản phẩm trong giỏ hàng</p>
-                                        </div>
-                                      
-                                    </div>
-                                    @foreach (var prod in Order.OrderDetails)
-                                    {
-                                    <div class="card mb-3">
-                                        <div class="card-body">
-                                            <div class="d-flex justify-content-between">
-                                                <div class="d-flex flex-row align-items-center">
-                                                    <div>
-                                                            <img src="@prod.Product.ImageUrl"
-                                                             class="img-fluid rounded-3" alt="Shopping item" style="width: 65px;">
-                                                    </div>
-                                                    <div class="ms-3">
-                                                            <h5>@prod.ProductName</h5>
-                                                            <p class="small mb-0">@prod.Size, @prod.Product.Category.Name</p>
-                                                    </div>
-                                                </div>
-                                                    <div class="d-flex flex-row align-items-center" style="width: 200px;">
-                                                    <div style="width: 50px;">
-                                                            <h5 class="fw-normal mb-0">@prod.Count</h5>
-                                                    </div>
-                                                    <div style="width: 110px;">
-                                                            <h5 class="mb-0"> @((prod.Count * prod.Price)) Vnđ</h5>
-                                                    </div>
-                                                   
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    }
-
-                                </div>
-                                <div class="col-lg-5">
-
-                                    <div class="card bg-primary text-white rounded-3">
-                                        <div class="card-body">
-                                            <div class="d-flex justify-content-between align-items-center ">
-                                                <h5 class="mb-0">Thông tin chi tiết</h5>
-                                                <img src="https://cdn-icons-png.flaticon.com/512/6596/6596121.png"
-                                                     class="img-fluid rounded-3" style="width: 45px; color:white;" alt="Avatar">
-                                            </div>
-                                            <EditForm Model="Order.OrderHeader" OnValidSubmit="HandleCheckout" class="mt-4">
-                                                <DataAnnotationsValidator />
-                                                <div class="form-outline form-white mb-2">
-                                                    <InputText type="text" @bind-Value="Order.OrderHeader.Name" class="form-control form-control-lg" siez="17"
-                                                               placeholder="Vui lòng nhập tên" style="font-size: 14px;" />
-                                                    <ValidationMessage For="()=>Order.OrderHeader.Name"></ValidationMessage>
-                                                </div>
-
-                                                <div class="form-outline form-white mb-2">
-                                                    <InputText type="number" @bind-Value="Order.OrderHeader.PhoneNumber" class="form-control form-control-lg" siez="17"
-                                                               placeholder="Vui lòng nhập số điện thoại" style="font-size: 14px;" />
-                                                    <ValidationMessage For="()=>Order.OrderHeader.PhoneNumber"></ValidationMessage>
-                                                </div>
-
-
-                                                <div class="form-outline form-white mb-2">
-                                                    <InputText type="email" @bind-Value="Order.OrderHeader.Email" class="form-control form-control-lg" siez="17"
-                                                               placeholder="Vui lòng nhập email" style="font-size: 14px;" />
-                                                    <ValidationMessage For="()=>Order.OrderHeader.Email"></ValidationMessage>
-                                                </div>
-
-                                                <div class="form-outline form-white mb-2">
-                                                    <InputText type="text" @bind-Value="Order.OrderHeader.StreetAddress" class="form-control form-control-lg" siez="17"
-                                                               placeholder="Vui lòng nhập địa chỉ" style="font-size: 14px;" />
-                                                    <ValidationMessage For="()=>Order.OrderHeader.StreetAddress"></ValidationMessage>
-                                                </div>
-
-                                                <div class="form-outline form-white mb-2">
-                                                    <InputText type="text" @bind-Value="Order.OrderHeader.City" class="form-control form-control-lg" siez="17"
-                                                               placeholder="Vui lòng nhập thành phố" style="font-size: 14px;" />
-                                                    <ValidationMessage For="()=>Order.OrderHeader.City"></ValidationMessage>
-                                                </div>
-
-                                                <div class="form-outline form-white mb-2">
-                                                    <InputText  hidden type="text" @bind-Value="Order.OrderHeader.State" class="form-control form-control-lg" siez="17"
-                                                               placeholder="Enter State" style="font-size: 14px;" />
-                                                    <ValidationMessage For="()=>Order.OrderHeader.State"></ValidationMessage>
-                                                </div>
-
-                                                <div class="form-outline form-white mb-2">
-                                                    <InputText hidden type="text" @bind-Value="Order.OrderHeader.PostalCode" class="form-control form-control-lg" siez="17"
-                                                               placeholder="Enter PostalCode" style="font-size: 14px;" />
-                                                    <ValidationMessage For="()=>Order.OrderHeader.PostalCode"></ValidationMessage>
-                                                </div>
-
-                                                <div class="d-flex justify-content-between mb-2">
-                                                    <p class="mb-2">Tổng phụ</p>
-                                                    <p class="mb-2">@Order.OrderHeader.OderTotal Vnđ</p>
-                                                </div>
-
-                                                <div class="d-flex justify-content-between mb-2">
-                                                    <p class="mb-2">Phí vận chuyển</p>
-                                                    <p class="mb-2">miễn phí</p>
-                                                </div>
-
-                                                <div class="d-flex justify-content-between mb-4">
-                                                    <p class="mb-2">Tổng tiền</p>
-                                                    <p class="mb-2">@Order.OrderHeader.OderTotal Vnđ</p>
-                                                </div>
-
-                                                <button type="submit" class="btn btn-info btn-block btn-lg text-white" style="width:100%;">
-                                                    <div class="d-flex justify-content-between">
-                                                        <span>@Order.OrderHeader.OderTotal Vnđ</span>
-                                                        <span>Tiến hành thanh toán <i class="fas fa-long-arrow-alt-right ms-2"></i></span>
-                                                    </div>
-                                                </button>
-                                            </EditForm>
-
-
-                            
-
-                                        </div>
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-                    </div>
+    <div class="body-detail">
+        <div class="intro-product">
+            <img src="/image/Product-gachchan.png" alt="">
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="text-intro">
+                    <a class="nav-a-intro hover-a" href="">Trang Chủ</a>
+                    <img src="/image/product-img-gachdung.png" alt="">
+                    <img class="img-cart-sum" src="/image/shopping-bag.png" alt="">
                 </div>
             </div>
+            <div class="row pd-t-36 pd-bt-48">
+                <div class="col-md-6 ">
+                    <img class="w-100" src="/image/gachngangsummary.png" alt="">
+                    <div class="summary-sanpham">
+                        <h6 class="sp-text">Sản phẩm</h6>
+                        <h6 class="sp-text">Số lượng</h6>
+                        <h6 class="sp-text">Tạm tính</h6>
+                    </div>
+                    @foreach (var prod in Order.OrderDetails)
+                    {
+                    <div class="summary-product-buy row">
+                        <div class="name-productimg col-md-6 col-sm-6 col-6">
+                                <img class="w-15" src="@prod.Product.ImageUrl" alt="">
+                                <p class="name-productsummary">@prod.Product.Name</p>
+                        </div>
+                        <div class="quantity-summary col-md-3 col-sm-3 col-3">
+                                @prod.Count
+                        </div>
+                        <div class="tamtinh-summary col-md-3 col-sm-3 col-3">
+                                <p class="">@((prod.Count * prod.Price)) VNĐ</p>
+                        </div>
+                    </div>
+                    }
+                    <div class="row">
+                        <div class="tong-summary">
+                            <p class="p-tong">Tổng: </p>
+                            <p class="p-price">@Order.OrderHeader.OderTotal VNĐ</p>
+                        </div>
+                    </div>
+                    <img class="w-100 p-b-26" src="/image/gachngangsummary.png" alt="">
+                    <div class="button-tieptuc">
+                        <button class="btn-tieptuc">TIẾP TỤC XEM SẢN PHẨM</button>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="fill-infor">
+                          <EditForm Model="Order.OrderHeader" OnValidSubmit="HandleCheckout" class="mt-4">
+                                                <DataAnnotationsValidator />
+                        <h6>THÔNG TIN CHI TIẾT</h6>
+                        <div class="fill-input">
+                                <InputText class="fill-input-input" type="text" @bind-Value="Order.OrderHeader.Name" placeholder="Vui lòng nhập tên của bạn" style=" width: 100%;
+    margin-bottom: 8px;
+    border-radius: 22px;
+    padding: 8px 18px;
+    color: #888888;" />
+                                <ValidationMessage  For="()=>Order.OrderHeader.Name"></ValidationMessage>
+                                <InputText class="fill-input-input" type="text" @bind-Value="Order.OrderHeader.PhoneNumber" placeholder="Vui lòng nhập sđt của bạn" style=" width: 100%;
+    margin-bottom: 8px;
+    border-radius: 22px;
+    padding: 8px 18px;
+    color: #888888;" />
+                                <ValidationMessage For="()=>Order.OrderHeader.PhoneNumber"></ValidationMessage>
+                                <InputText class="fill-input-input" type="text" @bind-Value="Order.OrderHeader.Email" placeholder="Vui lòng nhập email của bạn" style=" width: 100%;
+    margin-bottom: 8px;
+    border-radius: 22px;
+    padding: 8px 18px;
+    color: #888888;" />
+                                <ValidationMessage For="()=>Order.OrderHeader.Email"></ValidationMessage>
+                                <InputText class="fill-input-input" type="text" @bind-Value="Order.OrderHeader.StreetAddress" placeholder="Vui lòng nhập địa chỉ của bạn" style=" width: 100%;
+    margin-bottom: 8px;
+    border-radius: 22px;
+    padding: 8px 18px;
+    color: #888888;" />
+                                <ValidationMessage For="()=>Order.OrderHeader.StreetAddress"></ValidationMessage>
+                                <InputText class="fill-input-input" type="text" @bind-Value="Order.OrderHeader.City" placeholder="Vui lòng nhập thành phố của bạn" style=" width: 100%;
+    margin-bottom: 8px;
+    border-radius: 22px;
+    padding: 8px 18px;
+    color: #888888;" />
+                                <ValidationMessage For="()=>Order.OrderHeader.City"></ValidationMessage>
+                                <InputText hidden type="text" @bind-Value="Order.OrderHeader.State" class="form-control form-control-lg" siez="17"
+                                           placeholder="Enter State" style="font-size: 14px;" />
+                                <ValidationMessage For="()=>Order.OrderHeader.State"></ValidationMessage>
+                                <InputText hidden type="text" @bind-Value="Order.OrderHeader.PostalCode" class="form-control form-control-lg" siez="17"
+                                           placeholder="Enter PostalCode" style="font-size: 14px;" />
+                                <ValidationMessage For="()=>Order.OrderHeader.PostalCode"></ValidationMessage>
+                        </div>
+                        <div class="total-summary">
+                                <p class="">Tổng phụ: @Order.OrderHeader.OderTotal VNĐ</p>
+                            <p>Phí vận chuyển: 0 VNĐ</p>
+                                <p>Tổng thanh toán: <span class="price-total">@Order.OrderHeader.OderTotal VNĐ</span></p>
+                        </div>
+                        <div class="button-thanhtoan">
+                            <button class="btn-thanhtoan">TIẾN HÀNH THANH TOÁN</button>
+                        </div>
+                        </EditForm>
+                    </div>
+                 
+                </div>
+            </div>
+
+
+
+
+
         </div>
-    </section>
-   
+
+
+    </div>
+   <Footer></Footer>
     }
 @code {
     public bool IsProcessing { get; set; } = false;

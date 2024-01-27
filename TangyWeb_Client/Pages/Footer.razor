@@ -1,216 +1,62 @@
-﻿<style>
+﻿
 
-    .btn {
-        padding: 10px 20px;
-        border: none;
-        cursor: pointer;
-        transition: background-color 0.5s, transform 0.5s;
-    }
-
-
-        .btn.bg-success {
-            background-color: #28a745;
-        }
-
-
-            .btn.bg-success:hover {
-                background-color: #218838;
-                transform: scale(1.1);
-            }
-
-
-        .btn.text-white {
-            color: #fff;
-        }
-
-
-            .btn.text-white:hover {
-                color: #f8f9fa;
-            }
-
-    .btn-light {
-        background-color: #f8f9fa;
-        color: #000000;
-        transition: background-color 0.3s, color 0.3s;
-    }
-
-        .btn-light:hover {
-            background-color: #007bff;
-            color: #ffffff;
-        }
-</style>
-<footer class="bg-body-tertiary" style="background-color: rgba(0, 0, 0, 0.05);">
-    <div class="container p-4">
-        <!-- Section: Social media -->
-        <section class="mb-4" style="text-align: center;">
-            <!-- Facebook -->
-            <a data-mdb-ripple-init class="btn btn-outline btn-floating m-1" href="#!" role="button">
-                <i class="fab fa-facebook-f"></i>
-            </a>
-
-            <!-- Twitter -->
-            <a data-mdb-ripple-init class="btn btn-outline btn-floating m-1" href="#!" role="button">
-                <i class="fab fa-twitter"></i>
-            </a>
-
-            <!-- Google -->
-            <a data-mdb-ripple-init class="btn btn-outline btn-floating m-1" href="#!" role="button">
-                <i class="fab fa-google"></i>
-            </a>
-
-            <!-- Instagram -->
-            <a data-mdb-ripple-init class="btn btn-outline btn-floating m-1" href="#!" role="button">
-                <i class="fab fa-instagram"></i>
-            </a>
-
-            <!-- Linkedin -->
-            <a data-mdb-ripple-init class="btn btn-outline btn-floating m-1" href="#!" role="button">
-                <i class="fab fa-linkedin-in"></i>
-            </a>
-
-            <!-- Github -->
-            <a data-mdb-ripple-init class="btn btn-outline btn-floating m-1" href="#!" role="button">
-                <i class="fab fa-github"></i>
-            </a>
-        </section>
-        <!-- Section: Social media -->
-        <!-- Section: Form -->
-        <section class="">
-            <form action="">
-                <!--Grid row-->
-                <div class="row d-flex justify-content-center">
-                    <!--Grid column-->
-                    <div class="col-auto">
-                        <p class="pt-2">
-                            <strong>Sign up for our newsletter</strong>
-                        </p>
-                    </div>
-                    <!--Grid column-->
-                    <!--Grid column-->
-                    <div class="col-md-5 col-12">
-                        <!-- Email input -->
-                        <div data-mdb-input-init class="form-outline mb-4">
-                            <input type="email" id="form5Example24" class="form-control" placeholder="Please Enter Email" />
-                        </div>
-                    </div>
-                    <!--Grid column-->
-                    <!--Grid column-->
-                    <div class="col-auto">
-                        <!-- Submit button -->
-                        <button type="submit" class="btn btn-light mb-4">
-                            Subscribe
-                        </button>
-                    </div>
-                    <!--Grid column-->
-                </div>
-                <!--Grid row-->
-            </form>
-        </section>
-        <!-- Section: Form -->
-        <!-- Section: Text -->
-        <section class="mb-4 text-center">
-            <p class="p-footer" style="font-size: 18px;
-    font-family: Bahnschrift;
-    color: #417867;">
-                Lành Store được thành lập vào 12/2023 với mong muốn đưa đến người dùng những sản phẩm chất lượng và giá thành tốt ngoài ra chúng tôi là đội ngũ kỹ thuật viên chuyên nghiệp phục vụ quý khách tận tâm.
-            </p>
-        </section>
-        <!-- Section: Text -->
-        <!-- Section: Links -->
-        <section class="text-center">
-            <!--Grid row-->
-            <div class="row">
-                <!--Grid column-->
-                <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
-                    <h5 class="text-uppercase">Thanh Toán</h5>
-
-                    <ul class="list-unstyled mb-0">
-                        <li>
-                            <a class="text-body" href="#!">Thanh toán tiền mặt</a>
-                        </li>
-                        <li>
-                            <a class="text-body" href="#!">Thẻ tín dụng</a>
-                        </li>
-                        <li>
-                            <a class="text-body" href="#!">Trả góp</a>
-                        </li>
-                        <li>
-                            <a class="text-body" href="#!">Trao đổi</a>
-                        </li>
-                    </ul>
-                </div>
-                <!--Grid column-->
-                <!--Grid column-->
-                <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
-                    <h5 class="text-uppercase">Liên hệ</h5>
-
-                    <ul class="list-unstyled mb-0">
-                        <li>
-                            <a class="text-body" href="#!">Địa chỉ: Ninh Kieu, Can Tho</a>
-                        </li>
-                        <li>
-                            <a class="text-body" href="#!">Số điện thoại: +84 364372 560</a>
-                        </li>
-                        <li>
-                            <a class="text-body" href="#!">Email: Ngovuhuy2016@gmail.com</a>
-                        </li>
-                        <li>
-                            <a class="text-body" href="#!">Instagram: #huyngo24</a>
-                        </li>
-                    </ul>
-                </div>
-                <!--Grid column-->
-                <!--Grid column-->
-                <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
-                    <h5 class="text-uppercase">Trợ giúp</h5>
-
-                    <ul class="list-unstyled mb-0">
-                        <li>
-                            <a class="text-body" href="#!">Tình trạng đặt hàng</a>
-                        </li>
-                        <li>
-                            <a class="text-body" href="#!">Vận chuyển</a>
-                        </li>
-                        <li>
-                            <a class="text-body" href="#!">Trả lại</a>
-                        </li>
-                        <li>
-                            <a class="text-body" href="#!">Các lựa chọn thanh toán</a>
-                        </li>
-                    </ul>
-                </div>
-                <!--Grid column-->
-                <!--Grid column-->
-                <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
-                    <h5 class="text-uppercase">Giới thiệu</h5>
-
-                    <ul class="list-unstyled mb-0">
-                        <li>
-                            <a class="text-body" href="#!">Thông báo</a>
-                        </li>
-                        <li>
-                            <a class="text-body" href="#!">đội ngũ phát triển</a>
-                        </li>
-                        <li>
-                            <a class="text-body" href="#!">Nhà đầu tư</a>
-                        </li>
-                        <li>
-                            <a class="text-body" href="#!">Thị trường</a>
-                        </li>
-                    </ul>
-                </div>
-                <!--Grid column-->
+<footer class="footer">
+    <div class="container introfooter">
+        <div class="row">
+            <div class=" col-md-4 lienhe mobifix-footer">
+                <h4>Liên hệ qua: 09xxxxxx</h4>
             </div>
-            <!--Grid row-->
-        </section>
-        <!-- Section: Links -->
+            <div class="col-md-4 input-footer mobifix-footer">
+                <input type="text" placeholder="Nhập SĐT của bạn">
+                <button class="btn btn-success">Gửi Ngay</button>
+            </div>
+            <div class="col-md-4 text-center mobifix-footer">
+                <a href="" class="icon-footer">
+                    <img src="/image/Vector.png" />
+                </a>
+                <a href="" class="icon-footer">
+                    <img src="/image/instagram.png" />
+                </a>
+                <a href="" class="icon-footer">
+                    <img src="/image/mail.png" />
+                </a>
+                <a href="" class="icon-footer">
+                    <img src="/image/phone.png" />
+                </a>
+            </div>
+        </div>
     </div>
-    <!-- Grid container -->
-    <!-- Copyright -->
-    <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.05);">
-        © 2023 Copyright:
-        <a class="text-reset fw-bold" href="#">lanhstore.com</a>
+    <img class="gach-footer" src="/image/Gachfooter.png" alt="">
+    <div class="container introfooter-team">
+        <div class="row">
+            <div class="col-md-4 about-team ">
+                <h4>VỀ CHÚNG TÔI</h4>
+                <h5>Giới Thiệu Thương Hiệu</h5>
+                <h5>Triết lí Thương Hiệu</h5>
+                <h5>Lịch sử Thương Hiệu</h5>
+                <h5>Nhà sáng lập</h5>
+                <h5>Hệ thống Đại Lý</h5>
+            </div>
+            <div class="col-md-4 about-team">
+                <h4>HỖ TRỢ KHÁCH HÀNG</h4>
+                <h5>Chính sách bảo mật</h5>
+                <h5>Chính sách chung </h5>
+                <h5>Các hình thức thanh toán</h5>
+                <h5>Điều khoản mua hàng </h5>
+                <h5>Chính sách vận chuyển</h5>
+            </div><div class="col-md-4 about-team">
+                <h4>HỆ THỐNG SHOWROOM</h4>
+                <h5>Chi nhánh 1: Lorem ipsum dolor sit amet consectetur.</h5>
+                <h5>Chi nhánh 2: Lorem ipsum dolor sit amet consectetur.</h5>
+
+            </div>
+        </div>
     </div>
 
+    <img class="gach-footer" src="/image/Gachfooter.png" alt="">
+    <div class="text-banquyen">
+        <h4>
+            © Bản quyền thuộc về Lành
+        </h4>
+    </div>
 </footer>
-

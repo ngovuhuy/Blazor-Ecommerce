@@ -36,3 +36,4 @@ function HideDeleteConfirmationModal() {
     $('#deleteConfirmationModal').modal('hide');
 }
 
+

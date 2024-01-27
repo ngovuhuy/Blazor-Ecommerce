@@ -1,0 +1,82 @@
+﻿h4{
+    background:none;
+}
+.footer {
+    background: #1E1E1E;
+}
+
+.introfooter {
+    padding-top: 50px;
+    padding-bottom: 20px;
+}
+
+.lienhe h4 {
+    color: #FEFBF4;
+}
+
+.input-footer input {
+    padding: 5px 60px;
+    border-radius: 24px;
+    outline: 1px solid #D9D9D9;
+    border: none;
+    padding-left: 20px;
+    padding-right: 20px;
+    background: #D9D9D9;
+}
+
+.input-footer button {
+    padding: 6px 20px;
+    border-radius: 20px;
+    margin-left: -69px;
+    margin-top: -3px;
+}
+
+.icon-footer img {
+    margin: 0 8px;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.gach-footer {
+    width: 100%;
+}
+
+.about-team {
+    color: #FFFFFF;
+    padding-bottom: 30px;
+}
+
+.introfooter-team {
+    padding-top: 30px;
+}
+
+.about-team h5 {
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 300;
+}
+.text-banquyen {
+    text-align: center;
+}
+
+.text-banquyen h4 {
+    color: #fff;
+    text-align: center;
+    font-size: 18px;
+    padding-bottom: 12px;
+    
+}
+
+@media (max-width: 1024px) {
+    .mobifix-footer {
+        width: 100%;
+        text-align: center;
+        padding-bottom: 20px;
+    }
+
+    .about-team {
+        text-align: center;
+    }
+}

@@ -10,139 +10,200 @@
 @inject NavigationManager _navi
 @inject IJSRuntime JSRuntime
 <style>
-    .fa-cart-shopping:before, .fa-shopping-cart:before {
-        font-size: 18px;
-        content: "\f07a";
-    }
-
-    .li-css-border {
-        display: flex;
-        align-items: center;
-        /*border: 2px solid #89a988;*/
-        border-radius: 6px;
-        text-decoration: none;
-    }
-
-    .user-icon {
-        position: relative;
-        cursor: pointer;
-    }
-
-    .user-menu {
+    #user-dropdown .dropdown-menu {
         display: none;
-        position: absolute;
-        top: 40px;
-        right: 0;
-        left: 0px;
-        width: 117px;
     }
 
-    .user-menu2 {
-        display: none;
-        position: absolute;
-        top: 40px;
-        right: 0;
-        left: 0px;
-        width: 117px;
-    }
-    .user-icon:hover .user-menu {
+    #user-dropdown.show .dropdown-menu {
         display: block;
     }
 
-    .logout-btn {
-        background-color: #4caf50;
-        color: #fff;
-        
-        border: none;
-        border-radius: 3px;
-        cursor: pointer;
+    .dropdown-menu{
+        padding-left: 14px;
+        background: #ccc;
+      
+        margin: -10px;
+        margin-left: 22px;
     }
 
-        .logout-btn:hover {
-            background-color: #45a049;
-        }
+    .dropdown-menu  a{
+            line-height: 32px;
+        color: #7e3131;
+    }
+
+    .hover-infor :hover{
+        opacity:0.6;
+    }
+    .cursor{
+        cursor:pointer;
+    }
 </style>
-<nav class="navbar navbar-expand-lg navbar-dark p-3" id="headerNav" style="background-color: #27542b;">
-    <div class="container-fluid">
-        <a class="navbar-brand d-block d-lg-none" href="#">
-            <img src="./image/logo1.jpg" height="80" />
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class=" collapse navbar-collapse" id="navbarNavDropdown">
-            <ul class="navbar-nav mx-auto " style="align-items: center;">
-                <li class="nav-item li-css">
-                    <a class="nav-link mx-2" aria-current="page" href="/">
-                       @* <i class="fa-solid fa-house"></i>*@
-                       Home
+<div class="header">
+    <div class="sub-menu">
+        <div class="container">
+            <div class="row mid-css">
+                <div class="col col-md-2 ">
+                    <a class="text-white" href="">Hotline</a>
+                </div>
+                <div class="col col-md-2 icon-communicate">
+                    <a href="">
+                        <img src="/image/Vector.png" />
                     </a>
-                </li>
-                <li class="nav-item li-css">
-                    <a type="button" class="nav-link mx-2">Sản Phẩm</a>
-                </li>
-
-                <li class="nav-item d-none d-lg-block li-css">
-                    <a class="nav-link mx-2" href="#">
-                        <img src="./image/logo1.jpg" height="80" />
+                    <a href="">
+                        <img src="/image/instagram.png" />
                     </a>
-                </li>
-               
-              <AuthorizeView>
-                  <Authorized>
-                        @*           <li class="nav-item li-css">
-                        <a class="nav-link mx-2" href="#">Hello, @context.User.Identity.Name</a>
-                        </li>*@
-                        <li class="nav-item li-css">
-                            <div class="user-icon">
-                                @*<i class="fa-solid fa-user" style="color: rgba(255,255,255,.55);"></i>*@
-                                <a class="nav-link mx-2" href="#">Tài Khoản</a>
-                                <div class="user-menu">
-                            <a class="nav-link mx-2" href="logout" style="color:#fff">đăng xuất</a>
-                                </div>
-                                <div>
-                                    <a type="button" class="nav-link mx-2" @onclick="ChangePassword" style="color:#fff">Đổi mật khẩu</a>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="nav-item li-css">
-                            <a type="button" class="nav-link mx-2" @onclick="NavigateToOrderDetails2"> Lịch sử</a>
-                        </li>
-                  </Authorized>
-                  <NotAuthorized>
-                        <li class="nav-item dropdown li-css">
-                            <a class="nav-link mx-2 " href="login">
-                               @* <i class="fa-solid fa-user"></i>*@
-                               Đăng nhập
+                    <a href="">
+                        <img src="/image/mail.png" />
+                    </a>
+                    <a href="">
+                        <img src="/image/phone.png" />
+                    </a>
+                </div>
+                <div class="col col-md-4">
+                    <a href="">
+                        <img src="/image/logo.png" alt="">
+                    </a>
+                </div>
+                   <AuthorizeView>
+                <Authorized>
+                        <div class="col col-md-2 taikhoan-css" id="user-dropdown">
+                            <a href="#"   aria-expanded="false">
+                                <img src="/image/user.png" alt="">
+                                <p class="text-white">Tài Khoản</p>
                             </a>
-                          @*  <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                <li class="css-auth"><a class="css-auth" href="login">Login</a></li>
-                                <li class="css-auth"><a class="css-auth" href="register">Register</a></li>
-                                <li class="css-auth"><a class="css-auth" href="#">Contact us</a></li>
-                            </ul>*@
-                        </li>
-                  </NotAuthorized>
-              </AuthorizeView>
-                <li class="nav-item li-css ">
-                    <a class="nav-link mx-2 li-css-border" href="cart" style="height:45px;">
-                      @*  <i class="fa-solid fa-cart-shopping" style="font-size:18px;"></i>*@
-                       @* <i class="bi bi-cart"></i>*@
-                        Giỏ Hàng
-                        (@GetCartCount())
-                    </a>
-                </li>
-                
-                    
-     
-            </ul>
+                            <ul class="dropdown-menu">
+                                <li class="hover-infor cursor"><a @onclick="ChangePassword" style="color: #7e3131;">Đổi mật khẩu</a></li>
+                                <li class="hover-infor"><a href="logout">Đăng Xuất</a></li>
+                                <!-- Thêm các mục khác cần thiết vào đây -->
+                            </ul>
+                        </div>
+                </Authorized>
+                 <NotAuthorized>
+                        <div class="col col-md-2 taikhoan-css" id="user-dropdown">
+                            <a href="#" aria-expanded="false">
+                                <img src="/image/user.png" alt="">
+                                <p class="text-white">Tài Khoản</p>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li class="hover-infor"><a href="login">Đăng Nhập</a></li>
+                                <li class="hover-infor"><a href="register">Đăng Ký</a></li>
+                                <!-- Thêm các mục khác cần thiết vào đây -->
+                            </ul>
+                        </div>
+                     </NotAuthorized>
+                   </AuthorizeView>
+                <div class="col col-md-2">
+                    <a class="text-white" href="">EN/VI</a>
+                </div>
+            </div>
         </div>
     </div>
-</nav>
+    <div class="menu">
+        <div class="container">
+            <div class="row mid-css pading-menu text-left m-l-60">
+                <div class="col col-md-2">
+                    <a class="color-285430" href="">Trang chủ</a>
+                </div>
+                <div class="col col-md-2">
+                    <a href="product" class="color-1F1C17">Sản phẩm</a>
+                </div>
+                 <AuthorizeView>
+                  <Authorized>
+                <div class="col col-md-2">
+                <a class="color-1F1C17" @onclick="NavigateToOrderDetails2" style="cursor:pointer;">Lịch sử</a>
+                </div>
+                 </Authorized>
+                    <NotAuthorized>
+                          <div class="col col-md-2">
+                        <a class="color-1F1C17" href="login">Lịch sử</a>
+                        </div>
+                  </NotAuthorized>
+                </AuthorizeView>
+                <div class="col col-md-2">
+                    <a class="cart-css" href="cart">
+                        <img src="/image/shopping-bag.png" alt="">
+                       @* <span>@GetCartCount()</span>*@
+                    </a>
+                </div>
+                <div class="col col-md-2 mid-css dis-flex">
+                    <input class="input-search" type="text" placeholder="Tìm kiếm sản phẩm">
+                    <div class="icon-search dis-flex mg-l35">
+                        <img class="gach-css" src="/image/gachdung.png" alt="">
+                        <img class="icon-search-css" src="/image/search.png" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="reponsive-menu">
+        <div class="container mid-css-mobi mobi-bars">
+            <img class="cursor" src="/image/logo.png" alt="">
+            <label for="nav-mobile-input">
+                <i class="fa-solid fa-bars icon-bar"></i>
+            </label>
+            <input hidden type="checkbox" class="nav__input" id="nav-mobile-input">
+            <label for="nav-mobile-input" class="nav__overlay"></label>
+            <div class="nav__mobile">
+                <label for="nav-mobile-input" class="nav_close">
+                    <i class="fa-regular fa-circle-xmark"></i>
+                </label>
+                <ul class="nav__list">
+                    <li>
+                        <a class="nav__link cart-css color-285430" href="/">Trang chủ</a>
+                    </li>
+                    <li>
+                        <a href="product" class="nav__link cart-css">Sản phẩm</a>
+                    </li>
+                    <AuthorizeView>
+                        <Authorized>
+                    <li>
+                                <a class="nav__link cart-css m-l--10px" @onclick="NavigateToOrderDetails2">Lịch sử</a>
+                    </li>
+                            <li>
+                                <a class="nav__link cart-css" @onclick="ChangePassword">Đổi mật khẩu</a>
+                            </li>
+                            <li>
+                                <a class="nav__link cart-css" href="logout">Đăng xuất</a>
+                            </li>
+                      </Authorized>
+                      <NotAuthorized>
+                            <li>
+                                <a class="nav__link cart-css m-l--10px" href="login">Lịch sử</a>
+                            </li>
+                            <li>
+                                <a class="nav__link cart-css m-l--10px" href="login">Đăng nhập</a>
+                            </li>
+                            <li>
+                                <a class="nav__link cart-css m-l--10px" href="register">Đăng ký</a>
+                            </li>
+                      </NotAuthorized>
+                </AuthorizeView>
+                    <li>
+                        <a class="nav__link cart-css" href="cart">
+                            <img src="/image/shopping-bag.png" alt="">
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+
+    </div>
+    <div class="reponsive-menu-sub">
+        <div class="mid-css dis-flex">
+            <input class="input-search" type="text" placeholder="Tìm kiếm sản phẩm">
+            <div class="icon-search dis-flex mg-l35">
+                <img class="gach-css" src="/image/gachdung.png" alt="">
+                <img class="icon-search-css" src="/image/search.png" alt="">
+            </div>
+        </div>
+    </div>
+</div>
 @code{
     private UserDTO userDetail;
     protected override async Task OnInitializedAsync()
     {
+        _cartService.OnChange += StateHasChanged;
         try
         {
             var jsonString = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "UserDetails");

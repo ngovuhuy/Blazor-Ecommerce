@@ -1,0 +1,24 @@
+﻿@if (IsVisible)
+{
+    <div class="popup">
+        <div class="popup-content">
+            <button @onclick="ClosePopup">X</button>
+            <h3>Đây là nội dung pop-up</h3>
+            <!-- Thêm nội dung khác tại đây -->
+        </div>
+    </div>
+}
+
+@code {
+    public bool IsVisible { get; set; }
+
+    public void ShowPopup()
+    {
+        IsVisible = true;
+    }
+
+    public void ClosePopup()
+    {
+        IsVisible = false;
+    }
+}

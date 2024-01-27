@@ -143,7 +143,11 @@ namespace Tangy_Business.Repository
             {
                 orderHeaderList = _db.OrderHeaders.Where(o => o.UserId == userId);
                 //orderDetailList = _db.OrderDetails.Include(o => o.Product).AsQueryable();
-                orderDetailList = _db.OrderDetails.Where(od => orderHeaderList.Select(oh => oh.Id).Contains(od.OrderHeaderId));
+                orderDetailList = _db.OrderDetails.Where(o => orderHeaderList.Select(o => o.Id).Contains(o.OrderHeaderId)).ToList();
+                foreach (var orderDetail in orderDetailList)
+                {
+                    orderDetail.Product = _db.Products.FirstOrDefault(p => p.Id == orderDetail.ProductId);
+                }
             }
             else
             {

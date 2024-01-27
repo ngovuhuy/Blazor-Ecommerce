@@ -13,6 +13,6 @@ namespace TangyWeb_Client.Helper
         {
             await jsRuntime.InvokeVoidAsync("ShowToastr",  "error", message);
         }
-
-    }
+	
+	}
 }

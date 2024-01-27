@@ -4,6 +4,7 @@
 @inject IProductService _productService
 @inject ICartService _cartService
 @inject NavigationManager _navi
+@inject MyPopup myPopup
 <style>
 	a{
 		text-decoration:none;
@@ -108,17 +109,58 @@ else
 				<div class="card-footer">
 					<div class="col-12  col-md-3 offset-md-9">
 					@*	<button  class="btn btn-primary form-control" @onclick="NavigateToSummary">Summary</button>*@
-						<a class="btn btn-primary form-control" href="/summary">Thanh toán</a>
+						@*<a class="btn btn-primary form-control" href="/summary">Thanh toán</a>*@
+						<button class="btn btn-primary form-control" @onclick="ShowModal">Thanh toán</button>
+						
 					</div>
 				</div>
 			</div>
 		</div>
+	
+
 	}
+	<div class="overlay" style="display: @(IsModalVisible ? "block" : "none")"></div>
+	<div class="modal" tabindex="-1" style="display: @(IsModalVisible ? "block" : "none")">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" style="    color: red;
+    font-weight: 800;">
+						Phương thức thanh toán
+					</h5>
+					<button type="button" class="close" @onclick="CloseModal" style="font-size: 36px;border: navajowhite;padding: 0px 14px;border-radius: 12px;">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<span style="color:red;font-size:18px;">(1)</span> <a href="cashpayment" class="tienmat" style="color:#653f5c;font-size:18px;">Thanh toán tiền mặt</a>
+					<br>
+					<div style="padding-top: 16px;">
+						<span style="color:red;font-size:18px;">(2)</span> <a href="summary" class="the" style="color:#653f5c;font-size:18px;">Thanh toán bằng thẻ</a>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-danger" @onclick="CloseModal">Trở về</button>
+				</div>
+			</div>
+		</div>
+	</div>
 	<Footer></Footer>
 
 
 }
 @code {
+	private bool IsModalVisible = false;
+
+	private void ShowModal()
+	{
+		IsModalVisible = true;
+	}
+
+	private void CloseModal()
+	{
+		IsModalVisible = false;
+	}
 	public bool IsProcessing { get; set; } = false;
 	private List<ShoppingCart> ShoppingCart = new List<ShoppingCart>();
 	private IEnumerable<ProductDTO> Products { get; set; }
@@ -156,7 +198,7 @@ else
 			ProductId = ProductId,
 			ProductPriceId = ProductPriceId
 		});
-		 await LoadCart();
+		await LoadCart();
 		IsProcessing = false;
 	}
 
@@ -175,8 +217,7 @@ else
 		IsProcessing = false;
 	}
 
-	//private void NavigateToSummary()
-	//{
-	//	_navi.NavigateTo("/summary", forceLoad:true);
-	//}
+
+
+
 }

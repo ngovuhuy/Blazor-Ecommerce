@@ -11,107 +11,42 @@
 @inject ILocalStorageService localStorage
 @inject NavigationManager _navi
 @inject IJSRuntime JSRuntime
-<style>
-    .h3-text {
-        font-size: 40px;
-        color: #997878;
-    }
 
-    .comment {
-        padding: 10px 100px;
-    }
-
-    .input-comment input {
-        display: block;
-        width: 100%;
-        height: 50px;
-        padding-left: 13px;
-        font-size: 20px;
-    }
-
-    .input-comment {
-        display: flex;
-    }
-
-    .icon-send {
-        margin-top: 12px;
-        margin-left: -45px;
-        font-size: 22px;
-    }
-
-    .btn-icon {
-        outline: none;
-        background-color: #fff;
-        cursor: pointer;
-        padding: 0 0;
-        width: 0;
-        height: 0;
-    }
-
-    .user-comment {
-        display: flex;
-        padding-top: 20px;
-    }
-
-    .img-avatar {
-        padding-top: 16px;
-        width: 60px;
-        height: 55px;
-    }
-
-    .text-comment {
-        margin-left: 18px;
-    }
-
-    .noidungcomment {
-        color: #4d4848;
-    }
-
-    .name-user {
-        font-weight: 700;
-    }
-
-    .time-ago {
-        font-weight: 400;
-        color: #aa9d9d;
-    }
-</style>
-<div class="comment">
-    <h3 class="h3-text">Comment @Comments.Count</h3>
-    <div class="input-comment">
-        <input @bind="newCommentText" type="text" placeholder="vui lòng nhập nội dung...">
-        <button @onclick="AddComment" type="submit" class="btn-icon">
-            <i class="fa-regular fa-paper-plane icon-send"></i>
-        </button>
-    </div>
-    @if (userDetail== null)
-    {
-        <p class="text-danger">Vui lòng đăng nhập để thêm Comment.
-
-        </p>
-    }
-    @if (Comments == null)
-    {
-        <p>Loading comments...</p>
-    }
-    else
-    {
-
-        @foreach (var comment in Comments)
+<div class="comment-detail">
+    <div class="container">
+        <button class="btn btn-success comment-quantity">Đánh giá (@Comments.Count)</button>
+           @foreach (var comment in Comments)
         {
-
-
-            <div class="user-comment">
-                <div class="user-avatar">
-                    <img class="img-avatar" src="data:image/png;base64,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" alt="">
-                </div>
-                <div class="text-comment">
-                    <p class="noidungcomment">@comment.Text</p>
-                    <p class="name-user">@comment.Name <span class="time-ago">@comment.CreatedAt</span></p>
+        <div class="row comment-main">
+            <div class="col-md-4 text-center">
+                <img class="user-comment" src="/image/user-comment.png" alt="">
+            </div>
+            <div class="col-md-8 pd-32">
+                    <p>@comment.Text</p>
+                <div class="infor-user">
+                        <p>@comment.Name</p>
+                        <p>@comment.CreatedAt</p>
                 </div>
             </div>
+        </div>
         }
-    }
+        @if (userDetail == null)
+        {
+            <p class="text-danger">
+                Vui lòng đăng nhập để thêm Comment.
+
+            </p>
+        }
+        @if (Comments == null)
+        {
+            <p>Loading comments...</p>
+        }
+        <div class="input-comment">
+
+            <input @bind="newCommentText" type="text" placeholder="Vui lòng nhập nội dung">
+            <button @onclick="AddComment" class="btn btn-success">Gửi ngay</button>
+        </div>
+    </div>
 </div>
 
 @code {

@@ -1,0 +1,108 @@
+﻿@page "/product"
+@using TangyWeb_Client.Service.IService;
+@using Tangy_Models;
+@inject HttpClient http
+@inject IProductService _productService
+@using Blazorise
+@using Blazorise.Bootstrap
+@if (IsProcessing)
+{
+    <div style="position:fixed;top:50%;left:50%;margin-top:-50px;margin-left:-100px;">
+        <img src="image/ajax-loader.gif" />
+    </div>
+}
+else
+{
+    @foreach (var category in Products.Select(u => u.Category.Name).Distinct())
+    {
+        <div class="intro-product">
+            <img src="/image/Product-gachchan.png" alt="">
+        </div>
+        <div class="container">
+            <div class="row">
+
+                <div class="text-intro">
+                    <a class="nav-a-intro hover-a" href="/">Trang Chủ</a>
+                    <img src="/image/product-img-gachdung.png" alt="">
+                    <a  class="nav-a-intro " href="#">Sản Phẩm</a>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="product-high">
+                <h4 class="w-100">PHÂN LOẠI SẢN PHẨM</h4>
+                <button class="btnsucess btn btn-success">Hộp giấy</button>
+                <button class="btnlight btn btn-light">Lon giấy</button>
+            </div>
+      
+                <div class="row pd-t-32">
+                @if (Products != null)
+                {
+                    @foreach (var product in Products?.Where(u => u.Category.Name == category) ?? Enumerable.Empty<ProductDTO>())
+                    {
+                        <div class="col-md-4 product-section-mid" >
+                            <div class="product-section">
+                                <img class="product-image" src="@product.ImageUrl" alt="">
+                                <h6 class="name-product">
+                                    @product.Name
+                        </h6>
+                                <p class="product-des">
+                                    @product.Description
+                        </p>
+                        <img src="/image/start.png" alt="">
+                                <p class="product-price">
+                                    @product.ProductPrices?.OrderBy(u => u.Price).FirstOrDefault()?.Price
+                                    VNĐ
+                                </p>
+                                <a href="/details/@product.Id" class="btn-detail btn btn-success">Xem chi tiết</a>
+                    </div>
+                </div>
+                }
+                }
+            </div>
+     
+        </div>
+        
+    }
+}
+<Footer></Footer>
+@code {
+    public bool IsProcessing { get; set; } = false;
+    public IEnumerable<ProductDTO> Products { get; set; } = new List<ProductDTO>();
+    private string searchQuery;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            IsProcessing = true;
+            Products = await _productService.GetAll();
+        }
+        catch (Exception ex)
+        {
+            // Xử lý ngoại lệ ở đây (ví dụ: ghi log, hiển thị thông báo lỗi)
+            Console.WriteLine($"Lỗi trong quá trình tải dữ liệu: {ex.Message}");
+        }
+        finally
+        {
+            IsProcessing = false;
+        }
+    }
+    private async Task PerformSearch()
+    {
+        try
+        {
+            IsProcessing = true;
+            Products = await _productService.Search(searchQuery);
+        }
+        catch (Exception ex)
+        {
+
+            Console.WriteLine($"Error during search: {ex.Message}");
+        }
+        finally
+        {
+            IsProcessing = false;
+        }
+    }
+}

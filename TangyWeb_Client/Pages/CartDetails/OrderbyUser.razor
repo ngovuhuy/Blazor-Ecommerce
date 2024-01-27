@@ -5,6 +5,16 @@
 @inject ILocalStorageService _localStorage
 @inject IOrderSerivce _orderService
 @inject NavigationManager _navi
+<style>
+    .btn {
+        padding: 4px 15px;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.5s, transform 0.5s;
+        margin-left: 7px;
+        margin-top: -5px;
+    }
+</style>
 @if (Order == null || !Order.Any())
 {
     <div style="position:fixed;top:50%;left:50%;margin-top:-50px;margin-left:-100px;">
@@ -13,179 +23,111 @@
 }
 else
 {
-    <h5 style="color: red;
-    font-size: 24px;
-    align-items: center;
-    display: flex;
-    justify-content: center;
-    padding-top: 48px;">
-        Lịch sử đặt hàng
-    </h5>
-    @foreach (var orderDTO in Order)
-    {
-        <div class="container mt-5 mb-5">
+    <div class="body-detail">
+        <div class="intro-product">
+            <img src="/image/Product-gachchan.png" alt="">
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="text-intro">
+                    <a class="nav-a-intro hover-a" href="/">Trang Chủ</a>
+                    <img src="/image/product-img-gachdung.png" alt="">
+                    <a class="nav-a-intro" href="">Sản Phẩm</a>
+                </div>
+            </div>
 
-            <div class="row d-flex justify-content-center">
+            @foreach (var orderDTO in Order)
+            {
+                @foreach (var orderDetailDTO in orderDTO.OrderDetails)
+                {
+            <div class="row">
+                <div class="content-product">
+                    <div class="content-intro">
+                        <h5>BỘT RAU CỦ SẤY LẠNH</h5>
+                        <a href="product" class="btn btn-success">Xem thêm sản phẩm</a>
+                    </div>
+                    <div class="status-product">
+                        <h5>Tình trạng giao hàng:</h5>
+                                <p>@orderDTO.OrderHeader.Status</p>
+                    </div>
+                </div>
 
-                <div class="col-md-8">
-
-                    <div class="card">
-                        <div class="invoice p-5-css">
-
-                            <div class="payment border-top mt-3 mb-3 border-bottom table-responsive">
-
-                                <table class="table table-borderless">
-
-                                    <tbody>
-                                        <tr>
-                                            <td>
-                                                <div class="py-2">
-
-                                                    <span class="d-block text-muted">Ngày đặt</span>
-                                                    <span>@orderDTO.OrderHeader.OrderDate</span>
-
-                                                </div>
-                                            </td>
-
-                                            <td>
-                                                <div class="py-2">
-
-                                                    <span class="d-block text-muted">mã đơn hàng</span>
-                                                    <span>@orderDTO.OrderHeader.Id</span>
-
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div class="py-2">
-
-                                                    <span class="d-block text-muted">Giao đến địa chỉ</span>
-                                                    <span>@orderDTO.OrderHeader.StreetAddress, @orderDTO.OrderHeader.City</span>
-
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-
-                                </table>
-                            </div>
-                            <div class="product border-bottom table-responsive">
-
-                              <table class="table table-borderless">
-                                    @foreach (var orderDetailDTO in orderDTO.OrderDetails)
-                                    {
-                                        <tbody>
-                                            <tr>
-                                                <td width="60%">
-                                                    <span class="font-weight-bold">@orderDetailDTO.ProductName</span>
-                                                    <div class="product-qty">
-                                                        <span class="d-block">Số lượng:@orderDetailDTO.Count</span>
-                                                        @*<span>màu:@orderDetailDTO.Product.Color</span>*@
-
-                                                    </div>
-                                                </td>
-                                                <td width="20%">
-                                                    <div class="text-right">
-                                                        <span class="font-weight-bold">@orderDetailDTO.Price Vnđ</span>
-                                                    </div>
-                                                </td>
-
-                                              @*  <td width="20%">
-                                                    <div class="text-right">
-                                                        <span class="font-weight-bold">@orderDetailDTO.Price Vnđ</span>
-                                                    </div>
-                                                </td>*@
-                                            </tr>
-
-
-                                        </tbody>
-                                    }
-                                </table>
-
-
-
-                            </div>
-
-
-
-                            <div class="row d-flex justify-content-end">
-
-                                <div class="col-md-5">
-
-                                    <table class="table table-borderless">
-
-                                        <tbody class="totals">
-
-                                            <tr>
-                                                <td>
-                                                    <div class="text-left">
-
-                                                        <span class="text-muted">Tổng phụ</span>
-
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div class="text-right">
-                                                        <span>@orderDTO.OrderHeader.OderTotal Vnđ</span>
-                                                    </div>
-                                                </td>
-                                            </tr>
-
-
-                                            <tr>
-                                                <td>
-                                                    <div class="text-left">
-
-                                                        <span class="text-muted">Miễn phí ship</span>
-
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div class="text-right">
-                                                        <span>0</span>
-                                                    </div>
-                                                </td>
-                                            </tr>
-
-
-                                            <tr class="border-top border-bottom">
-                                                <td>
-                                                    <div class="text-left">
-
-                                                        <span class="font-weight-bold">Tổng</span>
-
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div class="text-right">
-                                                        <span class="font-weight-bold">@orderDTO.OrderHeader.OderTotal Vnđ</span>
-                                                    </div>
-                                                </td>
-                                            </tr>
-
-                                        </tbody>
-
-                                    </table>
-
-                                </div>
-
-                            </div>
-                         
-                        </div>
-                        <div class="d-flex justify-content-between footer p-3">
-
-                            <span>Need Help? visit our <a href="/"> help center</a></span>
-                         
-
-                        </div>
+            </div>
+            <img class="w-100" src="/image/gachnganglichsu.png" alt="">
+            
+            <div class="row">
+                <div class="product-history">
+                            @if (orderDetailDTO.Product != null)
+                            {
+                                <img class="w-18" src="https://localhost:7178/@orderDetailDTO.Product.ImageUrl" alt="" />
+                            }
+                            else
+                            {
+                                <!-- Thêm một hình ảnh mặc định hoặc thông báo lỗi -->
+                                <p>Hình ảnh không có sẵn</p>
+                            }
+                    <div class="text-history">
+                                <p class="name">@orderDetailDTO.ProductName</p>
+                        <p class="category">
+                                    Phân loại: Hộp giấy
+                        </p>
+                                <p class="quantity">x @orderDetailDTO.Count</p>
+                                <p class="price">@orderDetailDTO.Price VNĐ</p>
                     </div>
                 </div>
             </div>
+    
+
+            <div class="container mt-5">
+                <table class="table custom-table">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">Ngày đặt hàng</th>
+                            <th scope="col">Mã đơn hàng</th>
+                            <th class="diachi" scope="col">Địa chỉ giao hàng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dữ liệu của bạn sẽ được thêm vào đây -->
+                        <tr>
+                                <td>@orderDTO.OrderHeader.OrderDate</td>
+                                <td>@orderDTO.OrderHeader.Id</td>
+                                <td>@orderDTO.OrderHeader.StreetAddress, @orderDTO.OrderHeader.City</td>
+                        </tr>
+
+                        <!-- Thêm các dòng khác nếu cần -->
+                    </tbody>
+                </table>
+                <div class="totalprice">
+                        <p class="tong">Tổng: @orderDTO.OrderHeader.OderTotal VNĐ</p>
+                    <p class="ship">Phí ship: 0 VNĐ</p>
+                </div>
+                <img class="w-100" src="/image/gachnganglichsu.png" alt="">
+                <div class="thanhtien">
+                        <p class="thanhtien-price">Thành tiền: <span class="price-span">@orderDTO.OrderHeader.OderTotal VNĐ</span></p>
+                </div>
+
+                <div class="voucher">
+                        <p>Đánh giá và nhận voucher trước @orderDTO.OrderHeader.OrderDate</p>
+                    <div class="xemlai">
+                            <a href="#" class="btn-danhgia" style="text-decoration:none;">Đánh giá</a>
+                        <a href="product" class="btn-mualai" style="text-decoration:none;">Mua lại</a>
+
+                    </div>
+                </div>
+            </div>
+            }
+            }
         </div>
+
+
+    </div>
+
+
+
+
+    <Footer></Footer>
     }
-}
-
-
-
 @code {
     private List<OrderDTO> Order { get; set; } = new List<OrderDTO>();
     [Parameter]
@@ -196,7 +138,6 @@ else
       
         try
         {
-            Order = await _localStorage.GetItemAsync<List<OrderDTO>>(SD.Local_OrderDetails);
            Order = await _order.GetUserOrder(userId);
         }
         catch (Exception ex)
