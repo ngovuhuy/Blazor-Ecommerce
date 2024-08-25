@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Org.BouncyCastle.Crypto.Macs;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -182,6 +183,63 @@ namespace TangyWeb_API.Controllers
 
             return Ok(new { SuccessMessage = "Đổi mật khẩu thành công" });
 
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditProfile(string userId, [FromBody] EditProfileDTO editProfileDTO)
+        {
+            // Tìm người dùng trong cơ sở dữ liệu
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound(new { ErrorMessage = "Người dùng không tồn tại" });
+            }
+
+            user.Email = editProfileDTO.Gmail;
+            user.name = editProfileDTO.Name;
+            user.PhoneNumber = editProfileDTO.PhoneNumber;
+
+ 
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+            {
+               
+                var errors = result.Errors.Select(error => error.Description).ToList();
+                return BadRequest(new { Errors = errors });
+            }
+
+            return Ok(new { SuccessMessage = "Cập nhật hồ sơ thành công" });
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> GetUserProfile(string userId)
+        {
+            try
+            {
+                // Tìm người dùng trong cơ sở dữ liệu
+                var user = await _userManager.FindByIdAsync(userId);
+                if (user == null)
+                {
+                    return NotFound(new { ErrorMessage = "Người dùng không tồn tại" });
+                }
+
+                // Trả về thông tin hồ sơ của người dùng
+                var userProfile = new EditProfileDTO
+                {
+                    Gmail = user.Email,
+                    Name = user.name,
+                    PhoneNumber = user.PhoneNumber,
+                };
+
+                return Ok(userProfile);
+            }
+            catch (Exception ex)
+            {
+              
+                Console.WriteLine($"Lỗi khi lấy thông tin người dùng: {ex.Message}");
+                return StatusCode(500, "Internal Server Error");
+            }
         }
     }
 }

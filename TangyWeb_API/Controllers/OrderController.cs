@@ -1,9 +1,14 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using MailKit.Net.Smtp;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
+using MimeKit;
+using MimeKit.Text;
 using Stripe.Checkout;
 using Tangy_Business.Repository.IRepository;
 using Tangy_Models;
+using TangyWeb_API.Helper;
+using TangyWeb_API.Service;
 
 namespace TangyWeb_API.Controllers
 {
@@ -11,13 +16,29 @@ namespace TangyWeb_API.Controllers
     [ApiController]
     public class OrderController : ControllerBase
     {
+      
         private readonly IOrderRepository _orderRepository;
+       private readonly IMailService _mailService;
         private readonly IEmailSender _emailSender;
-        public OrderController(IOrderRepository orderRepository, IEmailSender emailSender)
+        public OrderController(IOrderRepository orderRepository, IMailService mailService, IEmailSender emailSender)
         {
             _orderRepository = orderRepository;
-            _emailSender = emailSender;
+            _mailService = mailService;
+            _emailSender = emailSender;  
         }
+        [HttpPost]
+        public async Task<IActionResult> Send([FromForm] MailRequest request)
+        {
+            try
+            {
+                await _mailService.SendEmailAsync(request);
+                return Ok();
+            }catch (Exception ex)
+            {
+                throw;
+            }
+        }
+       
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -110,7 +131,8 @@ namespace TangyWeb_API.Controllers
             if(sessionDetails.PaymentStatus == "paid")
             {
                 var result = await _orderRepository.MarkPaymentSuccessful(orderHeaderDTO.Id);
-                //await _emailSender.SendEmailAsync(orderHeaderDTO.Email, "Order Vip", "New order:" + orderHeaderDTO.Id);
+                string emailContent = $"Cảm ơn anh/chị: {orderHeaderDTO.Name}<br>Mã đơn hàng của bạn: {orderHeaderDTO.Id}<br>Giao đến địa chỉ là: {orderHeaderDTO.StreetAddress} {orderHeaderDTO.City}";
+                await _emailSender.SendEmailAsync(orderHeaderDTO.Email, "Cảm ơn bạn đã mua hàng từ Lành Stores", emailContent);
                 if (result == null)
                 {
                     return BadRequest(new ErrorModelDTO()

@@ -126,7 +126,8 @@ namespace TangyWeb_Server.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
 
-                    await _userManager.AddToRoleAsync(user, SD.Role_Customer);
+                    await _userManager.AddToRoleAsync(user, SD.Role_Admin);
+               //     await _userManager.AddToRoleAsync(user, SD.Role_Customer);
                     _logger.LogInformation("User created a new account with password.");
 
                     var userId = await _userManager.GetUserIdAsync(user);

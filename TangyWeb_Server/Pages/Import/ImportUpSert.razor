@@ -1,0 +1,105 @@
+﻿@page "/import/create"
+@page "/import/edit/{id:int}"
+@inject IImportRepository _importRepository
+@inject IProductRepository _productRepository
+@inject NavigationManager _navigationManager
+@inject IJSRuntime _jsRuntime
+@inject IFileUpload _fileUpload
+@attribute [Authorize]
+
+<div class="row my-2">
+    <h3 class="card-title text-primary mb-3 ml-3">@Title Import</h3>
+
+    <div class="col-md-10">
+        @if (IsLoading)
+        {
+            <div class="text-center">
+                <img src="/image/loading.gif" />
+            </div>
+        }
+        else
+        {
+            <EditForm Model="Import" OnValidSubmit="UpsertImport">
+                <DataAnnotationsValidator />
+                <div class="form-group">
+                    <label>ImportQuantity</label>
+                    <InputNumber @bind-Value="Import.ImportQuantity" class="form-control" required />
+                    <ValidationMessage For="()=>Import.ImportQuantity" />
+                </div>
+                <div class="form-group">
+                    <label>Price</label>
+                    <InputNumber @bind-Value="Import.UnitPrice" class="form-control" required />
+                    <ValidationMessage For="()=>Import.UnitPrice" />
+                </div>
+                <div class="form-group">
+                    <label>Date Added</label>
+                    <InputDate @bind-Value="Import.DateAdded" class="form-control" required />
+                    <ValidationMessage For="()=>Import.DateAdded" />
+                </div>
+                <div class="form-group">
+                    <label>Product</label>
+                    <InputSelect @bind-Value="Import.ProductId" class="form-select" required>
+                        <option value="" disabled="disabled" selected>--Select Product--</option>
+                        @foreach (var product in Products)
+                        {
+                            <option value="@product.Id">@product.Name</option>
+                        }
+                    </InputSelect>
+                    <ValidationMessage For="()=>Import.ProductId" />
+                </div>
+
+                <div class="form-group py-2">
+                    <button class="btn btn-primary">@Title</button>
+                    <NavLink href="import" class="btn btn-secondary">Back To Index</NavLink>
+                </div>
+            </EditForm>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    private Import Import { get; set; } = new();
+    private IEnumerable<Import> Imports { get; set; } = new List<Import>();
+    private IEnumerable<ProductDTO> Products { get; set; } = new List<ProductDTO>();
+
+    private string Title { get; set; } = "Create";
+    public bool IsLoading { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firsRender)
+    {
+        if (firsRender)
+        {
+            await LoadImport();
+        }
+    }
+
+    private async Task LoadImport()
+    {
+        IsLoading = true;
+        StateHasChanged();
+        Products = await _productRepository.GetAll();
+        Imports = await _importRepository.GetAllImports();
+        IsLoading = false;
+        StateHasChanged();
+    }
+
+    private async Task UpsertImport()
+    {
+        var product = await _productRepository.Get(Import.ProductId);
+        if (product == null)
+        {
+  
+            return;
+        }
+
+     
+        if (Id == 0)
+        {
+             _importRepository.AddImport(Import);
+            await _jsRuntime.ToastrSuccess("Import Created Successfully.");
+        }
+        _navigationManager.NavigateTo("import");
+    }
+}

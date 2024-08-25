@@ -90,16 +90,17 @@ else
                                         <input type="text" readonly value="@Order.OrderHeader.OrderDate.ToShortDateString()" class="form-control" />
                                     </div>
                                 </div>
-                                <div class="row my-1">
+                                <div class="row my-1" hidden>
                                     <div class="col-3">Carrier</div>
                                     <div class="col-9">
-                                        <InputText @bind-Value="Order.OrderHeader.Carrier" class="form-control" />
+                                        <InputText @bind-Value="Order.OrderHeader.Carrier" class="form-control"  />
                                     </div>
                                 </div>
-                                <div class="row my-1">
+
+                                <div class="row my-1" hidden>
                                     <div class="col-3">Tracking</div>
                                     <div class="col-9">
-                                        <InputText @bind-Value="Order.OrderHeader.Tracking" class="form-control" />
+                                        <InputText @bind-Value="Order.OrderHeader.Tracking" class="form-control"  />
                                     </div>
                                 </div>
                                 @if (Order.OrderHeader.Status != SD.Status_Confirmed && Order.OrderHeader.Status != SD.Status_Pending)
@@ -140,11 +141,11 @@ else
                                         <div class="row container">
                                             <div class="col-8">
                                                 <h6 class="my-0 text-primary">@detail.ProductName</h6>
-                                                <small class="text-muted">Price : @detail.Price.ToString("c")</small><br />
+                                                <small class="text-muted">Price : @detail.Price.ToString("N0") VNĐ</small><br />
                                                 <small class="text-muted">Quantity : @detail.Count</small>
                                             </div>
                                             <div class="col-4 text-end">
-                                                <p class="text-success">@((detail.Count * detail.Price).ToString("c"))</p>
+                                                <p class="text-success">@((detail.Count * detail.Price).ToString("N0")) VNĐ</p>
                                             </div>
                                         </div>
                                     </li>
@@ -155,7 +156,7 @@ else
                                             <h5 class="text-white">TOTAL </h5>
                                         </div>
                                         <div class="col-6 text-end">
-                                            <h5 class="text-white">@Order.OrderHeader.OderTotal.ToString("c")</h5>
+                                            <h5 class="text-white">@Order.OrderHeader.OderTotal.ToString("N0") VNĐ</h5>
                                         </div>
                                     </div>
                                 </li>
@@ -178,7 +179,11 @@ else
             </div>
         </div>
     </div>
+    <!-- Modal for Confirmation -->
+  
+
 }
+
 @code {
     [Parameter]
     public int Id { get; set; } = 0;
@@ -198,6 +203,12 @@ else
         IsLoading = true;
         StateHasChanged();
         Order = await _orderRepository.Get(Id);
+        if (string.IsNullOrEmpty(Order.OrderHeader.Carrier) && string.IsNullOrEmpty(Order.OrderHeader.Tracking))
+        {
+           
+            Order.OrderHeader.Carrier = "1111";
+            Order.OrderHeader.Tracking = "1111";
+        }
         IsLoading = false;
         StateHasChanged();
     }

@@ -1,9 +1,9 @@
 ﻿@page "/product/price/{Id:int}"
 @inject IProductRepository _productRepository
 @inject IProductPriceRepository _productPriceRepository
+@inject IJSRuntime _jsRuntime
 @using Syncfusion.Blazor.Grids
 @attribute [Authorize]
-
 <h3 class="card-title text-primary mb-3 ml-3">Product Price Management</h3>
 @if (IsLoading)
 {
@@ -16,55 +16,72 @@ else
     <div class="row border p-2 mb-4">
         <div class="col-11">
             <div class="card-body">
-            <h4>@Product.Name</h4>
-            <span>Category: @Product.Category.Name</span> <br/>
-                  Description: <span>@Product.Description</span>
+                <h4>@Product.Name</h4>
+                <span>Category: @Product.Category.Name</span> <br />
+                Description: <span>@Product.Description</span>
             </div>
         </div>
 
         <div class="col-1">
-            <img src="@Product.ImageUrl" class="w-100"/>
+            <img src="@Product.ImageUrl" class="w-100" />
         </div>
     </div>
 
-    <SfGrid @ref="productPriceGrid" DataSource="@ProductPrices" AllowPaging="true" AllowFiltering="true" AllowSorting="true" Toolbar="@(new List<string>{"Add","Edit","Update","Delete","Cancel"})">
-        <GridEditSettings AllowAdding="true" AllowEditing="true" ShowDeleteConfirmDialog="true" AllowDeleting="true"></GridEditSettings>
-        <GridEvents OnActionBegin="Actionhandler" TValue="ProductPriceDTO"></GridEvents>
-        <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu" ></GridFilterSettings>
-        <GridSortSettings AllowUnsort="false">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Size</th>
+                <th>Price</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var productPrice in ProductPrices)
+            {
+                <tr>
+                    <td>@productPrice.Id</td>
+                    <td>@productPrice.Size</td>
+                    <td>@productPrice.Price.ToString("N0") VNĐ</td>
+                    <td>
+                       
+                        <button class="btn btn-sm btn-danger" @onclick="() => DeleteProductPrice(productPrice)">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 
-            <GridSortColumns>
-                <GridSortColumn Field="Price" Direction="SortDirection.Ascending"></GridSortColumn>
-            </GridSortColumns>
-        </GridSortSettings>
-        <GridPageSettings PageSize="5" PageCount="5" PageSizes="true"></GridPageSettings>
-        <GridColumns>
-            <GridColumn IsPrimaryKey="true" AllowAdding="false" Field=@nameof(ProductPriceDTO.Id) HeaderText="Id" ></GridColumn>
-            <GridColumn Field=@nameof(ProductPriceDTO.Size) HeaderText="Size" >
-                <EditTemplate>
-                    <Syncfusion.Blazor.DropDowns.SfDropDownList DataSource="SizeList" TItem="string" TValue="string" @bind-Value="((context as ProductPriceDTO).Size)"> 
+    <div>
+        <h4>Add New Product Price</h4>
+        <form @onsubmit="AddProductPrice">
+            <div class="form-group">
+                <label for="size">Size</label>
+                <select class="form-control" @bind="newProductPrice.Size">
+                    @foreach (var size in SizeList)
+                    {
+                        <option value="@size">@size</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="price">Price</label>
+                <input type="number" class="form-control" @bind="newProductPrice.Price">
+            </div>
+            <button type="submit" class="btn btn-primary">Add</button>
+        </form>
+    </div>
 
-                    </Syncfusion.Blazor.DropDowns.SfDropDownList>
-                </EditTemplate>
-            </GridColumn>
-            <GridColumn Field=@nameof(ProductPriceDTO.Price) HeaderText="Price"    Width="130"></GridColumn>
-            <GridColumn HeaderText="Manage Records" Width="150">
-                <GridCommandColumns>
-                    <GridCommandColumn Type="CommandButtonType.Edit" ButtonOption="@(new CommandButtonOptions() { IconCss = "e-icons e-edit", CssClass = "e-flat" })"></GridCommandColumn>
-                    <GridCommandColumn Type="CommandButtonType.Delete" ButtonOption="@(new CommandButtonOptions() { IconCss = "e-icons e-delete", CssClass = "e-flat" })"></GridCommandColumn>
-                    <GridCommandColumn Type="CommandButtonType.Save" ButtonOption="@(new CommandButtonOptions() { IconCss = "e-icons e-update", CssClass = "e-flat" })"></GridCommandColumn>
-                    <GridCommandColumn Type="CommandButtonType.Cancel" ButtonOption="@(new CommandButtonOptions() { IconCss = "e-icons e-cancel-icon", CssClass = "e-flat" })"></GridCommandColumn>
-                </GridCommandColumns>
-            </GridColumn>
-        </GridColumns>
-    </SfGrid>
 }
+
+
 @code {
     [Parameter]
     public int Id { get; set; }
-
+    private ProductPriceDTO editingProductPrice { get; set; }
     private ProductDTO Product { get; set; } = new();
     private IEnumerable<ProductPriceDTO> ProductPrices { get; set; } = new List<ProductPriceDTO>();
+    private ProductPriceDTO newProductPrice { get; set; } = new ProductPriceDTO();
     public bool IsLoading { get; set; } = true;
 
     public SfGrid<ProductPriceDTO> productPriceGrid;
@@ -72,6 +89,7 @@ else
     {
         "Small","Medium","Large"
     };
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -105,6 +123,42 @@ else
         {
             await _productPriceRepository.Delete(args.Data.Id);
             productPriceGrid.Refresh();
+        }
+
+
+     
+    }
+
+    private async Task AddProductPrice()
+    {
+        newProductPrice.ProductId = Id;
+        newProductPrice.Size ??= "DefaultSize"; // Set a default value if it is null
+
+        var result = await _productPriceRepository.Create(newProductPrice);
+
+        if (result != null)
+        {
+            // Thêm mới thành công, cập nhật danh sách và làm mới biểu mẫu
+            ProductPrices = await _productPriceRepository.GetAll(Id);
+            newProductPrice = new ProductPriceDTO() { Size = "DefaultSize" }; // Reset the form
+            StateHasChanged();
+        }
+        else
+        {
+    
+        }
+    }
+
+    private async Task DeleteProductPrice(ProductPriceDTO productPrice)
+    {
+        var confirmDelete = await _jsRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete this product price?");
+       
+
+        if (confirmDelete)
+        {
+            await _productPriceRepository.Delete(productPrice.Id);
+            ProductPrices = await _productPriceRepository.GetAll(Id);
+            StateHasChanged();
         }
     }
 }    

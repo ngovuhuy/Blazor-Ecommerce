@@ -5,6 +5,8 @@
 @inject IProductService _productService
 @using Blazorise
 @using Blazorise.Bootstrap
+
+
 @if (IsProcessing)
 {
     <div style="position:fixed;top:50%;left:50%;margin-top:-50px;margin-left:-100px;">
@@ -13,19 +15,35 @@
 }
 else
 {
-    @foreach (var category in Products.Select(u => u.Category.Name).Distinct())
-    {
+    <div class="container" style="padding-top: 12px;">
+       <div class="row">
+            <div style="display:flex;justify-content: end;">
+                <input class="input-search" type="text" placeholder="Tìm kiếm sản phẩm" style="border-radius: 18px;
+    padding-left: 10px;" @bind-value="searchQuery">
+                <div class="icon-search dis-flex mg-l35" style="margin-left: -44px;">
+                    <button @onclick="PerformSearch" style="outline: none; border: none;background: none;">
+                        <img class="gach-css" src="/image/gachdung.png" alt="">
+                        <img class="icon-search-css" src="/image/search.png" alt="">
+                    </button>
+
+                </div>
+            </div>
+       </div>
+   </div>
+        @foreach (var category in Products.Select(u => u.Category.Name).Distinct())
+        {
         <div class="intro-product">
             <img src="/image/Product-gachchan.png" alt="">
         </div>
         <div class="container">
             <div class="row">
 
-                <div class="text-intro">
+                <div class="text-intro col-6">
                     <a class="nav-a-intro hover-a" href="/">Trang Chủ</a>
                     <img src="/image/product-img-gachdung.png" alt="">
                     <a  class="nav-a-intro " href="#">Sản Phẩm</a>
                 </div>
+               
             </div>
         </div>
         <div class="container">
@@ -36,7 +54,7 @@ else
             </div>
       
                 <div class="row pd-t-32">
-                @if (Products != null)
+                @if (Products != null && Products.Any())
                 {
                     @foreach (var product in Products?.Where(u => u.Category.Name == category) ?? Enumerable.Empty<ProductDTO>())
                     {
@@ -57,20 +75,25 @@ else
                                 <a href="/details/@product.Id" class="btn-detail btn btn-success">Xem chi tiết</a>
                     </div>
                 </div>
-                }
-                }
+                    }
+               }
+else if (!string.IsNullOrEmpty(searchQuery))
+{
+    <p>Không có sản phẩm phù hợp với tìm kiếm của bạn.</p>
+}
             </div>
      
         </div>
         
     }
 }
+
 <Footer></Footer>
 @code {
     public bool IsProcessing { get; set; } = false;
     public IEnumerable<ProductDTO> Products { get; set; } = new List<ProductDTO>();
     private string searchQuery;
-
+  
     protected override async Task OnInitializedAsync()
     {
         try
@@ -88,21 +111,21 @@ else
             IsProcessing = false;
         }
     }
-    private async Task PerformSearch()
-    {
-        try
+        private async Task PerformSearch()
         {
-            IsProcessing = true;
-            Products = await _productService.Search(searchQuery);
-        }
-        catch (Exception ex)
-        {
+            try
+            {
+                IsProcessing = true;
+                Products = await _productService.Search(searchQuery);
+            }
+            catch (Exception ex)
+            {
 
-            Console.WriteLine($"Error during search: {ex.Message}");
+                Console.WriteLine($"Error during search: {ex.Message}");
+            }
+            finally
+            {
+                IsProcessing = false;
+            }
         }
-        finally
-        {
-            IsProcessing = false;
-        }
-    }
 }

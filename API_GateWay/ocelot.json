@@ -1,0 +1,45 @@
+{
+  "Routes": [
+    {
+      "UpstreamPathTemplate": "/api/Blog",
+      "UpstreamHttpMethod": [ "Get", "Post" ],
+
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "tangywebapi.azurewebsites.net"
+        
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Blog"
+    },
+    {
+      "UpstreamPathTemplate": "/api/Blog/{id}",
+      "UpstreamHttpMethod": [ "Put", "Delete" ],
+
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "tangywebapi.azurewebsites.net"
+          
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Blog/{id}"
+    },
+    {
+      "UpstreamPathTemplate": "/api/Product",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "tangywebapi.azurewebsites.net"
+         
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Product",
+      "UpstreamHttpMethod": [ "Get" ]
+    }
+  ],
+  "GlobalConfiguration": {
+    "BaseUrl": "https://apigateway20240318225434.azurewebsites.net"
+  }
+}

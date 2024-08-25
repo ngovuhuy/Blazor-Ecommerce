@@ -1,0 +1,172 @@
+﻿@page "/import"
+@inject IImportRepository _importRepository
+@inject IProductRepository _productRepository
+
+@inject IJSRuntime _jsRuntime
+
+@inject NavigationManager _navigationManager
+
+<_DeleteConfirmation ConfirmationChanged="ConfirmDelete_Click" IsParentComponentProcessing="IsLoading"></_DeleteConfirmation>
+<div class="row mt-4">
+    <div class="col-4">
+        <h4 class="card-title text-primary">Import List</h4>
+    </div>
+    <div class="col-4">
+        <h4 class="card-title text-primary">Tổng Tiền nhập hàng: @totalAmount.ToString("N0") VNĐ</h4>
+
+
+
+    </div>
+    <div class="col-4 ">
+        <a href="/import/create" class="btn btn-primary form-control">Add New Import</a>
+    </div>
+</div>
+<div class="col-12">
+    @if (Imports.Any())
+    {
+        <table class="table table-bordered" style="margin-top:24px;">
+            <thead>
+                <tr>
+                    <th>Import Quantity</th>
+                    <th>Unit Price</th>
+                    <th>Date Added</th>
+                    <th>Product</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Imports)
+                {
+                    <tr>
+                        <td>@item.ImportQuantity</td>
+                        <td>@item.UnitPrice.ToString("N0") VNĐ</td>
+                        <td>@item.DateAdded</td>
+                        <th>
+                            @item.Product.Name
+                        </th>
+                        <td>
+                            <NavLink href="@($"import/details/{item.Id}")" class="btn btn-success">Details</NavLink>
+                            <button class="btn btn-danger" @onclick="()=>HandleDelete(item.Id)">Delete</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        if (IsLoading)
+        {
+            <div class="text-center">
+                <img src="/image/loading.gif" />
+            </div>
+        }
+        else
+        {
+            <p>No Import found.</p>
+        }
+    }
+</div>
+
+    <div>
+        <h4 class="card-title text-info">Orders Summary</h4>
+        <table class="table table-bordered" style="border: 2px">
+            <thead>
+                <tr>
+                    <th scope="col">Statistic</th>
+                    <th scope="col">Value</th>
+                </tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                <td>Total Orders</td>
+                <td>@totalAmount.ToString("N0") VNĐ</td>
+                </tr>
+                <tr>
+                    <td>Total Sales in Current Month</td>
+                <td>@totalAmountInCurrentMonth.ToString("N0") VNĐ</td>
+                </tr>
+                
+            </tbody>
+        </table>
+    </div>
+
+
+@code {
+    private IEnumerable<Import> Imports { get; set; } = new List<Import>();
+    private IEnumerable<ProductDTO> products { get; set; } = new List<ProductDTO>();
+    private decimal totalAmount;
+
+    public bool IsLoading { get; set; }
+    private int DeleteImportId { get; set; } = 0;
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthenticationState { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationState;
+        if (!authState.User.Identity.IsAuthenticated)
+        {
+            var uri = new Uri(_navigationManager.Uri);
+            _navigationManager.NavigateTo($"/identity/account/login?returnUrl={uri.LocalPath}", forceLoad: true);
+        }
+        else
+        {
+            if (!authState.User.IsInRole(Tangy_Common.SD.Role_Admin))
+            {
+                _navigationManager.NavigateTo("/ErrorPage");
+            }
+        }
+    }
+    protected override async Task OnAfterRenderAsync(bool firsRender)
+    {
+        if (firsRender)
+        {
+            await LoadImports();
+        }
+    }
+    private async Task<decimal> CalculateTotalAmountInCurrentMonth()
+    {
+        DateTime currentDate = DateTime.Now;
+        DateTime firstDayOfMonth = new DateTime(currentDate.Year, currentDate.Month, 1);
+        DateTime lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
+
+        return await _importRepository.CalculateTotalAmountInRange(firstDayOfMonth, lastDayOfMonth);
+    }
+    private decimal totalAmountInCurrentMonth;
+    private async Task LoadImports()
+    {
+        IsLoading = true;
+        StateHasChanged();
+        Imports =await  _importRepository.GetAllImports();
+        products = await _productRepository.GetAll();
+       totalAmount = await _importRepository.CalculateTotalAmount();
+        IsLoading = false;
+
+        totalAmountInCurrentMonth = await CalculateTotalAmountInCurrentMonth();
+        StateHasChanged();
+    }
+    private void HandleDelete(int id)
+    {
+        DeleteImportId = id;
+        _jsRuntime.InvokeVoidAsync("ShowDeleteConfirmationModal");
+    }
+
+    public async Task ConfirmDelete_Click(bool isConfirmed)
+    {
+        IsLoading = true;
+        if (isConfirmed && DeleteImportId != 0)
+        {
+            await Task.Delay(2000);
+            // delete
+            Import import =  _importRepository.GetImportById(DeleteImportId);
+            await _importRepository.Delete(DeleteImportId);
+            await _jsRuntime.ToastrSuccess("Import Deleted Successfully");
+            await LoadImports();
+            await _jsRuntime.InvokeVoidAsync("HideDeleteConfirmationModal");
+        }
+        IsLoading = false;
+    }
+
+
+}

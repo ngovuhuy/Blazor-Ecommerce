@@ -39,7 +39,48 @@
             }
         }
 </div>
+@if (OrderHeaders.Any())
+{
+    <div>
+        <h4 class="card-title text-info">Orders Summary</h4>
+        <table class="table table-bordered" style="border: 2px">
+            <thead>
+                <tr>
+                    <th scope="col">Statistic</th>
+                    <th scope="col">Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    var currentDate = DateTime.Now;
+                    var firstDayOfMonth = new DateTime(currentDate.Year, currentDate.Month, 1);
+                    var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
 
+                    var ordersInCurrentMonth = OrderHeaders.Where(o => o.OrderDate >= firstDayOfMonth && o.OrderDate <= lastDayOfMonth);
+                    var totalOrdersInCurrentMonth = ordersInCurrentMonth.Count();
+                    var totalSalesInCurrentMonth = ordersInCurrentMonth.Where(o => o.Status == "Shipped").Sum(o => o.OderTotal);
+                }
+                <tr>
+                    <td>Total Orders in Current Month</td>
+                    <td>@totalOrdersInCurrentMonth</td>
+                </tr>
+                <tr>
+                    <td>Total Sales in Current Month</td>
+                    <td>@totalSalesInCurrentMonth.ToString("N0") VNĐ</td>
+                </tr>
+                <tr>
+                    <td>Total Orders</td>
+                    <td>@OrderHeaders.Count()</td>
+                </tr>
+                <tr>
+                    <td>Total Sales</td>
+                    <td>@OrderHeaders.Where(o => o.Status == "Shipped").Sum(o => o.OderTotal).ToString("N0") VNĐ</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+}
 
 @code {
     private IEnumerable<OrderHeaderDTO> OrderHeaders { get; set; } = new List<OrderHeaderDTO>();

@@ -1,0 +1,136 @@
+﻿@page "/editprofile/{userId}"
+@using Blazored.LocalStorage
+@using Tangy_DataAccess
+@inject IOrderSerivce _order
+@inject ILocalStorageService _localStorage
+@inject IAuthenticationService ChangePasswordService
+@inject NavigationManager _navi
+<style>
+
+    .change-pass {
+        padding-top: 48px;
+        padding-bottom: 100px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+
+
+    .card-title {
+        font-weight: 300;
+    }
+
+    .btn {
+        font-size: 13px;
+    }
+
+    .login-form {
+        width: 45%;
+        margin: 20px;
+    }
+
+    .sign-up {
+        text-align: center;
+        padding: 20px 0 0;
+    }
+
+    span {
+        font-size: 14px;
+    }
+
+    .submit-btn {
+        margin-top: 20px;
+    }
+</style>
+
+<div class="change-pass">
+    <div class="card login-form">
+        <div class="card-body">
+            <h3 class="card-title text-center">Edit Profile</h3>
+
+            <!--Password must contain one lowercase letter, one number, and be at least 7 characters long.-->
+
+            <div class="card-text">
+
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>Thay đổi thông tin!</strong> Bạn cần phải kiểm tra kĩ các thông tin về đăng nhập.
+                    <a class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </a>
+                </div>
+                <label for="exampleInputPhoneNumber">Tài Khoản</label>
+                <input readonly type="text" @bind="editProfileDTO.Gmail" class="form-control form-control-sm">
+                <label for="exampleInputEmail1">Họ và tên</label>
+                <input type="text" @bind="editProfileDTO.Name" class="form-control form-control-sm">
+
+                <label for="exampleInputPhoneNumber">Số điện thoại</label>
+                <input type="text" @bind="editProfileDTO.PhoneNumber" class="form-control form-control-sm">
+
+                <button @onclick="UpdateProfile" class="btn btn-primary btn-block submit-btn">Thay đổi</button>
+                <button @onclick="comeback" class="btn btn-primary btn-block submit-btn">Trở Về</button>
+                @if (!string.IsNullOrEmpty(successMessage))
+                {
+                    <p style="color: green;">@successMessage</p>
+                }
+                @if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    <p style="color: red;">@errorMessage</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@code {
+    [Parameter]
+    public string userId { get; set; }
+    private string errorMessage;
+    private string successMessage;
+    private EditProfileDTO editProfileDTO = new EditProfileDTO();
+    protected override async Task OnInitializedAsync()
+    {
+        // Lấy thông tin người dùng từ API
+        var userProfile = await ChangePasswordService.GetUserProfile(userId); // Phương thức này cần được triển khai để gọi API và lấy thông tin người dùng
+
+        // Gán giá trị cho editProfileDTO
+        if (userProfile != null)
+        {
+            editProfileDTO.Gmail = userProfile.Gmail;
+            editProfileDTO.Name = userProfile.Name;
+            editProfileDTO.PhoneNumber = userProfile.PhoneNumber;
+        }
+    }
+    private void comeback()
+    {
+                _navi.NavigateTo("/");
+    }
+    private async Task UpdateProfile()
+    {
+        try
+        {
+            var response = await ChangePasswordService.UpdateProfile(userId, editProfileDTO);
+
+            if (response.IsProfileUpdatedSuccessfully)
+            {
+                // Hiển thị thông báo thành công
+                successMessage = "Cập nhật hồ sơ thành công!";
+                StateHasChanged();
+                // Chuyển hướng về trang home sau 2 giây
+                await Task.Delay(2000);
+                _navi.NavigateTo("/");
+            }
+            else
+            {
+                // Hiển thị thông báo lỗi
+                errorMessage = "Cập nhật hồ sơ không thành công";
+            }
+        }
+        catch (Exception ex)
+        {
+            // Xử lý khi có lỗi xảy ra trong quá trình gọi API
+            Console.WriteLine("Lỗi khi gọi API: " + ex.Message);
+        }
+    }
+}

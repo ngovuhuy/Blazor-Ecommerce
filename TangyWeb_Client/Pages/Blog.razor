@@ -1,0 +1,102 @@
+﻿@page "/blog"
+@inject IBlogService BlogRepository
+
+@if (IsProcessing)
+{
+    <div style="position:fixed;top:50%;left:50%;margin-top:-50px;margin-left:-100px;">
+        <img src="image/ajax-loader.gif" />
+    </div>
+
+}
+else
+{
+    if(blogs == null)
+    {
+        <div style="position:fixed;top:50%;left:50%;margin-top:-50px;margin-left:-100px;">
+            <img src="image/ajax-loader.gif"/>
+        </div>
+     
+    }
+      
+    else
+    {
+        <div class="py-5 team3 bg-light">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="slider-container">
+                            <div class="slider-row" style="text-align: center;">
+                                @foreach (var blog in blogs.Select((value, index) => new { value, index }))
+                                {
+                                    <div class="slider-item" style="display: @(blog.index >= currentIndex * itemsPerRow && blog.index < (currentIndex + 1) * itemsPerRow ? "inline-block" : "none")">
+                                        <!-- Nội dung của slide -->
+                                        <img src="@blog.value.Image" alt="wrapkit" class="img-fluid" style="height: 320px;margin: 0 32px;width: 320px;" />
+                                        <h5 class="mt-4 font-weight-medium mb-0">@blog.value.Name</h5>
+                                        <h6 class="subtitle" style="margin-top: 10px;color: #8d97ad;">@blog.value.title</h6>
+                                        <p style="color: #8d97ad;">@blog.value.Description.</p>
+                                        <ul class="list-inline">
+                                            <li class="list-inline-item"><a href="#" class="text-decoration-none d-block px-1"><i class="icon-social-facebook"></i></a></li>
+                                            <li class="list-inline-item"><a href="#" class="text-decoration-none d-block px-1"><i class="icon-social-twitter"></i></a></li>
+                                            <li class="list-inline-item"><a href="#" class="text-decoration-none d-block px-1"><i class="icon-social-instagram"></i></a></li>
+                                            <li class="list-inline-item"><a href="#" class="text-decoration-none d-block px-1"><i class="icon-social-behance"></i></a></li>
+                                        </ul>
+                                    </div>
+
+
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+      
+    }
+ 
+}
+    <Footer></Footer>
+@code {
+    private IEnumerable<Tangy_DataAccess.Blog> blogs;
+    public bool IsProcessing { get; set; } = false;
+    protected override async Task OnInitializedAsync()
+    {
+        blogs = await BlogRepository.GetBlogsAsync();
+        totalRows = (int)Math.Ceiling((double)blogs.Count() / itemsPerRow);
+        StartTimer();
+     
+    }
+
+    private int currentRow = 0;
+    private int currentIndex = 0;
+    private int itemsPerRow = 3;
+    private int totalRows;
+    private Timer timer;
+    private int interval = 3000;
+
+    private void StartTimer()
+    {
+        timer = new Timer(TimerCallback, null, 0, interval);
+    }
+
+    private void TimerCallback(object state)
+    {
+        MoveToNextSlide();
+    }
+
+    private void MoveToNextSlide()
+    {
+        if (currentIndex < totalRows - 1)
+        {
+            currentIndex++;
+        }
+        else
+        {
+            currentIndex = 0;
+        }
+
+        StateHasChanged();
+    }
+}
+
+                               

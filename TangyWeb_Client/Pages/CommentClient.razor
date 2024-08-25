@@ -12,6 +12,7 @@
 @inject NavigationManager _navi
 @inject IJSRuntime JSRuntime
 
+
 <div class="comment-detail">
     <div class="container">
         <button class="btn btn-success comment-quantity">Đánh giá (@Comments.Count)</button>
@@ -43,7 +44,7 @@
         }
         <div class="input-comment">
 
-            <input @bind="newCommentText" type="text" placeholder="Vui lòng nhập nội dung">
+            <input @bind="newCommentText" type="text" required placeholder="Vui lòng nhập nội dung">
             <button @onclick="AddComment" class="btn btn-success">Gửi ngay</button>
         </div>
     </div>
@@ -90,13 +91,19 @@
     }
     private async Task AddComment()
     {
+        if (string.IsNullOrWhiteSpace(newCommentText))
+        {
+            // Nếu newCommentText là khoảng trắng, không thực hiện thêm comment
+            await JSRuntime.ToastrError("Comment text cannot be empty or contain only whitespace.");
+            Console.WriteLine("Comment text cannot be empty or contain only whitespace.");
+            return;
+        }
 
         var jsonString = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "UserDetails");
         if (string.IsNullOrEmpty(jsonString))
         {
             _navi.NavigateTo("/login");
-            // Người dùng chưa đăng nhập, xử lý thông báo hoặc chuyển hướng đến trang đăng nhập
-            // Ví dụ: Hiển thị thông báo lỗi
+            await JSRuntime.ToastrError("User is not logged in. Please log in to add a comment.");
             Console.WriteLine("User is not logged in. Please log in to add a comment.");
             return;
         }
@@ -110,31 +117,28 @@
                     Email = document.RootElement.GetProperty("Email").GetString(),
                     PhoneNumber = document.RootElement.GetProperty("PhoneNumber").GetString()
                 };
-
-            Console.WriteLine("Id: " + userDetail?.Id);
         }
+
         if (userDetail != null)
         {
             var comment = new Comment
                 {
                     Text = newCommentText,
-                    UserId = userDetail.Id, // Chuyển đổi thành kiểu dữ liệu mong muốn
-                    ProductId = ProductId, // Chỉnh sửa để lấy ID sản phẩm từ trạng thái hoặc tham số URL
-                    Name = userDetail.Name ?? "Anonymous", // Thay đổi theo yêu cầu của bạn
+                    UserId = userDetail.Id,
+                    ProductId = ProductId,
+                    Name = userDetail.Name ?? "Anonymous",
                 };
 
             var createdComment = await CommentService.CreateComment(comment);
             newCommentText = "";
             await LoadComments();
-
-            // Xử lý kết quả, có thể cập nhật danh sách comment hoặc thực hiện các hành động khác
         }
         else
         {
             // Xử lý trường hợp người dùng chưa đăng nhập (nếu cần thiết)
         }
-     
     }
+
 
     private async Task LoadComments()
     {

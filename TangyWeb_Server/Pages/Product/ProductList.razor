@@ -24,6 +24,7 @@
                     <th>ShopFavorites</th>
                     <th>CustomerFavorites</th>
                     <th>Category</th>
+                    <th>Quantity</th>
                 </tr>
             </thead>
             <tbody>
@@ -39,6 +40,9 @@
                         </th>
                         <th>
                             @item.Category.Name
+                        </th>
+                        <th>
+                            @item.Quantity
                         </th>
                         <td>
                             <NavLink href="@($"product/edit/{item.Id}")" class="btn btn-primary">Edit</NavLink>

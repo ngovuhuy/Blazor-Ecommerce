@@ -33,7 +33,7 @@ namespace Tangy_Models
 
     
         public CategoryDTO Category { get; set; }
-
+        public int Quantity { get; set; }
         public ICollection<ProductPriceDTO> ProductPrices { get; set; }
 
     }

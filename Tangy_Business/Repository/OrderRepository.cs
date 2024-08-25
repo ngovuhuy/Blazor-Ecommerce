@@ -68,7 +68,19 @@ namespace Tangy_Business.Repository
                 foreach (var details in obj.OrderDetails)
                 {
                     details.OrderHeaderId = obj.OrderHeader.Id;
+                    var product = await _db.Products.FindAsync(details.ProductId);
+                    if (product != null && product.Quantity >= details.Count)
+                    {
+                        product.Quantity -= details.Count; // Cập nhật số lượng sản phẩm
+                    }
+                    else
+                    {
+                        // Xử lý trường hợp không đủ hàng, ví dụ thông báo lỗi
+                        throw new Exception("Not enough product in stock for product ID: " + details.ProductId);
+                    }
                 }
+                await _db.SaveChangesAsync();
+
                 _db.OrderDetails.AddRange(obj.OrderDetails);
                 await _db.SaveChangesAsync();
 

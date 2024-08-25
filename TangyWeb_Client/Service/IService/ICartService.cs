@@ -8,6 +8,6 @@ namespace TangyWeb_Client.Service.IService
 		Task DeCrementCart(ShoppingCart shoppingCart);
 
 		Task InCrementCart(ShoppingCart shoppingCart);
-
+		Task<int> GetQuantityInCart(int productId);
 	}
 }

@@ -9,6 +9,7 @@ namespace TangyWeb_Client.Service.IService
        Task Logout();
 
         Task<ChangePasswordResponseDTO> ChangePasswordAsync(ChangePasswordDTO changePasswordRequest, string? userId);
-
+        Task<UpdateProfileResponseDTO> UpdateProfile(string userId, EditProfileDTO userProfile);
+        Task<EditProfileDTO> GetUserProfile(string userId);
     }
 }

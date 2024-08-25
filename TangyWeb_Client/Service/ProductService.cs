@@ -9,11 +9,14 @@ namespace TangyWeb_Client.Service
         private readonly HttpClient _httpClient;
         private IConfiguration _configuration;
         private string BaseServerUrl;
+        private string BaseUrl;
+
         public ProductService(HttpClient httpClient, IConfiguration configuration)
         {
             _httpClient =  httpClient;
             _configuration = configuration;
             BaseServerUrl = _configuration.GetSection("BaseServerUrl").Value;
+            BaseUrl = _configuration.GetValue<string>("GlobalConfiguration:BaseUrl");
         }
         public async Task<ProductDTO> Get(int productId)
         {
@@ -35,8 +38,9 @@ namespace TangyWeb_Client.Service
 
         public async Task<IEnumerable<ProductDTO>> GetAll()
         {
-            var response = await _httpClient.GetAsync("/api/Product");
-            if(response.IsSuccessStatusCode)
+            //var response = await _httpClient.GetAsync("/api/Product");
+            var response = await _httpClient.GetAsync(BaseUrl + "/api/Product");
+            if (response.IsSuccessStatusCode)
             {
                 var content = await response.Content.ReadAsStringAsync();
                 var products = JsonConvert.DeserializeObject<IEnumerable<ProductDTO>>(content);

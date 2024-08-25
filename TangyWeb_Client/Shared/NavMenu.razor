@@ -69,10 +69,11 @@
                         <div class="col col-md-2 taikhoan-css" id="user-dropdown">
                             <a href="#"   aria-expanded="false">
                                 <img src="/image/user.png" alt="">
-                                <p class="text-white">Tài Khoản</p>
+                                <p class="text-white">@context.User.Identity.Name</p>
                             </a>
                             <ul class="dropdown-menu">
-                                <li class="hover-infor cursor"><a @onclick="ChangePassword" style="color: #7e3131;">Đổi mật khẩu</a></li>
+                                <li class="hover-infor cursor"><a @onclick="ChangePassword" style="color: #7e3131;">Đổi mật khẩu</a></li> 
+                                <li class="hover-infor cursor"><a @onclick="EditProfile" style="color: #7e3131;">Thay đổi thông tin</a></li>
                                 <li class="hover-infor"><a href="logout">Đăng Xuất</a></li>
                                 <!-- Thêm các mục khác cần thiết vào đây -->
                             </ul>
@@ -126,11 +127,12 @@
                     </a>
                 </div>
                 <div class="col col-md-2 mid-css dis-flex">
-                    <input class="input-search" type="text" placeholder="Tìm kiếm sản phẩm">
+                   @* <input class="input-search" type="text" placeholder="Tìm kiếm sản phẩm">
                     <div class="icon-search dis-flex mg-l35">
                         <img class="gach-css" src="/image/gachdung.png" alt="">
                         <img class="icon-search-css" src="/image/search.png" alt="">
-                    </div>
+                    </div>*@
+                    <a class="color-1F1C17" href="/blog">Thành Viên</a>
                 </div>
             </div>
         </div>
@@ -162,6 +164,10 @@
                             <li>
                                 <a class="nav__link cart-css" @onclick="ChangePassword">Đổi mật khẩu</a>
                             </li>
+                            <li>
+                                <a class="nav__link cart-css" @onclick="EditProfile">Thay đổi thông tin</a>
+                            </li>
+                           @* <li class="hover-infor cursor"><a @onclick="EditProfile" style="color: #7e3131;">Thay đổi thông tin</a></li>*@
                             <li>
                                 <a class="nav__link cart-css" href="logout">Đăng xuất</a>
                             </li>
@@ -247,6 +253,10 @@
     private void ChangePassword()
     {
         _navi.NavigateTo($"/changepassword/{userDetail.Id}");
+    }
+    private void EditProfile()
+    {
+        _navi.NavigateTo($"/editprofile/{userDetail.Id}");
     }
     public void Dispose()
     {

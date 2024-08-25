@@ -5,20 +5,8 @@
 @inject ICartService _cartService
 @inject NavigationManager _navi
 @inject MyPopup myPopup
-<style>
-	a{
-		text-decoration:none;
-	}
+@inject IJSRuntime _jsRuntime
 
-	.empty-cart {
-		text-align: center;
-		height:500px;
-		background-color: #fff;
-		border-radius: 8px;
-		box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-		padding: 20px;
-	}
-</style>
 
 @if (IsProcessing)
 {
@@ -107,11 +95,15 @@ else
 
 				</div>
 				<div class="card-footer">
-					<div class="col-12  col-md-3 offset-md-9">
-					@*	<button  class="btn btn-primary form-control" @onclick="NavigateToSummary">Summary</button>*@
-						@*<a class="btn btn-primary form-control" href="/summary">Thanh toán</a>*@
-						<button class="btn btn-primary form-control" @onclick="ShowModal">Thanh toán</button>
-						
+					<div class="col-12 col-md-3 offset-md-9">
+						@if (CanProceedToCheckout)
+						{
+							<button class="btn btn-primary form-control" @onclick="ShowModal">Thanh toán</button>
+						}
+						else
+						{
+							<button class="btn btn-primary form-control" disabled>Thanh toán</button>
+						}
 					</div>
 				</div>
 			</div>
@@ -151,10 +143,17 @@ else
 }
 @code {
 	private bool IsModalVisible = false;
-
-	private void ShowModal()
+	private bool CanProceedToCheckout = true;
+	private async void ShowModal()
 	{
-		IsModalVisible = true;
+		if (CanProceedToCheckout)
+		{
+			IsModalVisible = true;
+		}
+		else 
+		{
+			await _jsRuntime.ToastrError("Số lượng sản phẩm trong giỏ hàng vượt quá số lượng có sẵn trong kho.");
+		}
 	}
 
 	private void CloseModal()
@@ -182,6 +181,20 @@ else
 			// Xử lý khi giỏ hàng không có dữ liệu
 			return;
 		}
+
+		// Tính tổng số lượng sản phẩm trong giỏ hàng
+		int totalItemsInCart = ShoppingCart.Sum(item => item.Count);
+		// Lặp qua từng sản phẩm trong giỏ hàng để kiểm tra số lượng có sẵn trong kho
+		int totalItemsAvailableInStock = 0;
+		foreach (var cartItem in ShoppingCart)
+		{
+			int quantityInCart = await _cartService.GetQuantityInCart(cartItem.ProductId);
+			totalItemsAvailableInStock += quantityInCart;
+		}
+
+		// Kiểm tra nếu tổng số lượng sản phẩm trong giỏ hàng vượt quá số lượng có sẵn trong kho
+		CanProceedToCheckout = totalItemsInCart <= totalItemsAvailableInStock;
+
 		foreach (var cart in ShoppingCart)
 		{
 			cart.Product = Products.FirstOrDefault(u => u.Id == cart.ProductId);
@@ -189,33 +202,65 @@ else
 			OrderTotal += (cart.ProductPrice.Price * cart.Count);
 		}
 	}
+
+
+	public async Task<int> GetQuantityInCart(int productId)
+	{
+		int quantityInCart = await _cartService.GetQuantityInCart(productId);
+		return quantityInCart;
+	}
+
+
 	private async Task Increment(int ProductId, int ProductPriceId, int Count)
 	{
 		IsProcessing = true;
-		await _cartService.InCrementCart(new()
+
+		// Kiểm tra số lượng sản phẩm trong giỏ hàng đã vượt quá số lượng có sẵn trong kho chưa
+		var quantityInCart = await _cartService.GetQuantityInCart(ProductId);
+		var product = await _productService.Get(ProductId);
+		if (quantityInCart + Count > product.Quantity)
 		{
-			Count = Count,
-			ProductId = ProductId,
-			ProductPriceId = ProductPriceId
-		});
-		await LoadCart();
+			await _jsRuntime.ToastrError("Số lượng sản phẩm trong giỏ hàng vượt quá số lượng có sẵn trong kho.");
+		}
+		else
+		{
+			await _cartService.InCrementCart(new()
+				{
+					Count = Count,
+					ProductId = ProductId,
+					ProductPriceId = ProductPriceId
+				});
+			await LoadCart(); // Cập nhật lại giỏ hàng sau khi thay đổi
+		}
+
 		IsProcessing = false;
 	}
-
 
 	private async Task Decrement(int ProductId, int ProductPriceId, int Count)
 	{
 		IsProcessing = true;
-		await _cartService.DeCrementCart(new()
-			{
-				Count = Count,
-				ProductId = ProductId,
-				ProductPriceId = ProductPriceId
-			});
-		await LoadCart();
+
+		// Kiểm tra số lượng sản phẩm đã giảm về 0 chưa
+		var quantityInCart = await _cartService.GetQuantityInCart(ProductId);
+		if (quantityInCart - Count < 0)
+		{
+			await _jsRuntime.ToastrError("Số lượng sản phẩm trong giỏ hàng không thể giảm dưới 0.");
+		}
+		else
+		{
+			await _cartService.DeCrementCart(new()
+				{
+					Count = Count,
+					ProductId = ProductId,
+					ProductPriceId = ProductPriceId
+				});
+			await LoadCart(); // Cập nhật lại giỏ hàng sau khi thay đổi
+		}
 
 		IsProcessing = false;
 	}
+
+
 
 
 

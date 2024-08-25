@@ -54,6 +54,11 @@ namespace TangyWeb_API.Controllers
         [HttpPost]
         public async Task<ActionResult<Comment>> CreateComment(Comment commentDTO)
         {
+            if (string.IsNullOrWhiteSpace(commentDTO.Text))
+            {
+                return BadRequest("Comment text cannot be empty or contain only whitespace.");
+            }
+
             var comment = new Comment
             {
                 Text = commentDTO.Text,
@@ -68,6 +73,7 @@ namespace TangyWeb_API.Controllers
 
             return CreatedAtAction(nameof(GetComment), new { id = comment.Id }, CommentToDTO(comment));
         }
+
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Comment>> GetComment(int id)

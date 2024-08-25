@@ -14,6 +14,25 @@ namespace TangyWeb_Client.Service
         {
             _localStorage = localStorage;
         }
+		public async Task<int> GetQuantityInCart(int productId)
+		{
+			var cart = await _localStorage.GetItemAsync<List<ShoppingCart>>(SD.ShoppingCart);
+			if (cart == null)
+			{
+				return 0;
+			}
+
+			int totalQuantity = 0;
+			foreach (var item in cart)
+			{
+				if (item.ProductId == productId)
+				{
+					totalQuantity += item.Count;
+				}
+			}
+
+			return totalQuantity;
+		}
 		public async Task InCrementCart(ShoppingCart cartToAdd)
 		{
 			var cart = await _localStorage.GetItemAsync<List<ShoppingCart>>(SD.ShoppingCart);

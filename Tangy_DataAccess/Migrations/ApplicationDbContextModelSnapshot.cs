@@ -226,6 +226,35 @@ namespace Tangy_DataAccess.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Tangy_DataAccess.Blog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Image")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Blogs");
+                });
+
             modelBuilder.Entity("Tangy_DataAccess.Category", b =>
                 {
                     b.Property<int>("Id")
@@ -279,6 +308,33 @@ namespace Tangy_DataAccess.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Comments");
+                });
+
+            modelBuilder.Entity("Tangy_DataAccess.Import", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("DateAdded")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ImportQuantity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<double>("UnitPrice")
+                        .HasColumnType("float");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("Imports");
                 });
 
             modelBuilder.Entity("Tangy_DataAccess.OrderDetail", b =>
@@ -414,6 +470,9 @@ namespace Tangy_DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
                     b.Property<bool>("ShopFavorites")
                         .HasColumnType("bit");
 
@@ -528,6 +587,17 @@ namespace Tangy_DataAccess.Migrations
                     b.Navigation("Product");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Tangy_DataAccess.Import", b =>
+                {
+                    b.HasOne("Tangy_DataAccess.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Tangy_DataAccess.Product", b =>

@@ -38,9 +38,27 @@ namespace Tangy_Business.Repository
 
         public async Task AddCommentAsync(Comment comment)
         {
+            if (string.IsNullOrWhiteSpace(comment.Text))
+            {
+               
+                Console.WriteLine("Comment text cannot be empty or contain only whitespace.");
+                return;
+            }
+
             _db.Comments.Add(comment);
-            await _db.SaveChangesAsync();
+
+            try
+            {
+                await _db.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+               
+                Console.WriteLine($"Error saving comment to the database: {ex.Message}");
+              
+            }
         }
+
 
         public async Task UpdateCommentAsync(Comment comment)
         {

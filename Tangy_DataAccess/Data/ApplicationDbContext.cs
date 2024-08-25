@@ -25,5 +25,10 @@ namespace Tangy_DataAccess.Data
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
 
         public DbSet<Comment> Comments { get; set; }
+        public DbSet<Import> Imports { get; set; }
+
+        public DbSet<Blog> Blogs { get; set; }
+
+
     }
 }

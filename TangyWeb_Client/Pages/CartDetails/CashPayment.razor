@@ -196,6 +196,7 @@ else
             {
                 await _localStorage.RemoveItemAsync(SD.ShoppingCart);
                 _navi.NavigateTo("/");
+                await _jsRuntime.ToastrSuccess("Bạn đã đặt hàng thành công");
 
             }
             else

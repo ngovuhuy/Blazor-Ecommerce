@@ -10,6 +10,7 @@ using TangyWeb_Server.Service;
 using TangyWeb_Server.Service.IService;
 using Microsoft.AspNetCore.Identity;
 using Stripe;
+using Tangy_DataAccess;
 
 Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Ngo9BigBOggjHTQxAR8/V1NAaF5cWWJCfExwWmFZfVpgdVdMYlxbQXdPIiBoS35RckViWXhfcnZVQ2JYUkZ3");
 var builder = WebApplication.CreateBuilder(args);
@@ -25,13 +26,14 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // options => options.SignIn.RequireConfirmedAccount = true
 builder.Services.AddIdentity<IdentityUser,IdentityRole>().AddDefaultTokenProviders().AddDefaultUI()
     .AddEntityFrameworkStores<ApplicationDbContext>();
+
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 builder.Services.AddScoped<IProductPriceRepository, ProductPriceRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
-
+builder.Services.AddScoped<IImportRepository, ImportRepository>();
 builder.Services.AddScoped<IFileUpload, FileUpload>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 var app = builder.Build();
